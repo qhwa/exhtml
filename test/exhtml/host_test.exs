@@ -12,12 +12,19 @@ defmodule ExhtmlTest.HostTest do
   end
 
   test "start a host" do
-    {:ok, state} = Exhtml.Host.start(:foo, [])
-    assert state[:foo] == :running
+    {:ok, pid} = Exhtml.Host.start(:foo, [])
+    assert Process.alive?(pid)
   end
 
   test "get status of a host" do
     Exhtml.Host.start(:foo, [])
     assert Exhtml.Host.status(:foo) == :running
+  end
+
+  test "stop a host" do
+    {:ok, pid} = Exhtml.Host.start(:foo, [])
+    Exhtml.Host.stop(:foo)
+
+    refute Process.alive?(pid)
   end
 end

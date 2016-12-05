@@ -36,25 +36,38 @@ defmodule Exhtml.Host do
   end
 
 
-  def handle_call({:start, name, _}, _from, state) do
+  def handle_call({:start, name, opts}, _from, state) do
     case Map.get(state, name) do
-      :running ->
-        {:reply, {:already_started, state}, state}
+      nil ->
+        {:ok, pid} = start_host_with_opts(name, opts)
+        state = state |> Map.put(name, pid)
+        {:reply, {:ok, pid}, state}
       _ ->
-        state = state |> Map.put(name, :running)
-        {:reply, {:ok, state}, state}
+        {:reply, {:already_started, state[name]}, state}
     end
   end
 
 
   def handle_call({:stop, name}, _from, state) do
-    state = state |> Map.delete(name)
-    {:reply, :ok, state}
+    case Map.get(state, name) do
+      pid when is_pid(pid) ->
+        true = Process.exit(pid, :kill)
+        {:reply, :ok, Map.delete(state, name)}
+
+      nil ->
+        {:reply, :ok, state}
+    end
   end
 
 
   def handle_call({:status, name}, _from, state) do
-    {:reply, Map.get(state, name) || :not_running, state}
+    status = if Map.get(state, name), do: :running, else: :not_running
+    {:reply, status, state}
+  end
+
+
+  defp start_host_with_opts(_name, _opts) do
+    Exhtml.Table.start_link
   end
 
 
