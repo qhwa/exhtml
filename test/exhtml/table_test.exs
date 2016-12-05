@@ -15,6 +15,7 @@ defmodule Exhtml.TableTest do
 
   test "set content" do
     {:ok, state} = Exhtml.Table.set("foo", "bar")
+    assert state["foo"] == "bar"
     assert Exhtml.Table.get("foo") == "bar"
   end
 end
