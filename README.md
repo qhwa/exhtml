@@ -1,6 +1,11 @@
 # Exhtml
 
-**TODO: Add description**
+Exhtml is a library that handle HTML page serving.
+There are some benifts to have a dynamic HTML page host rather than static server:
+
+1. it's easy to deploy a small number of pages.
+2. it's safer to make the HTML server pull content from backend storage than push contents to it.
+3. you can add middlewares as you wish, such as performance monitoring, server-side procsessing, etc..
 
 ## Installation
 
