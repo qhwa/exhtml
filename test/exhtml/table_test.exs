@@ -5,6 +5,7 @@ defmodule Exhtml.TableTest do
 
   setup do
     Exhtml.Table.start_link
+    Exhtml.Table.rm("foo")
     :ok
   end
 
@@ -12,8 +13,8 @@ defmodule Exhtml.TableTest do
     assert Exhtml.Table.get("nonexist") == nil
   end
 
-  test "fetch content" do
-    assert Exhtml.Table.fetch("new-slug") == "NEW-SLUG"
-    assert Exhtml.Table.get("new-slug") == "NEW-SLUG"
+  test "set content" do
+    {:ok, state} = Exhtml.Table.set("foo", "bar")
+    assert Exhtml.Table.get("foo") == "bar"
   end
 end

@@ -14,27 +14,31 @@ defmodule Exhtml.Table do
     GenServer.call(__MODULE__, {:get, slug})
   end
 
-  def fetch(slug) do
-    GenServer.call(__MODULE__, {:fetch, slug})
+  def set(slug, content) do
+    GenServer.call(__MODULE__, {:set, slug, content})
+  end
+
+  def rm(slug) do
+    GenServer.call(__MODULE__, {:rm, slug})
   end
 
   def handle_call({:get, slug}, _from, state) do
     {:reply, Map.get(state, slug), state}
   end
 
-  def handle_call({:fetch, slug}, _from, state) do
-    content = fetch_content(slug)
+  def handle_call({:set, slug, content}, _from, state) do
     state = state
       |> Map.put(
         slug,
         content
       )
-    {:reply, content, state}
+    {:reply, {:ok, state}, state}
   end
 
-  defp fetch_content(slug) do
-    # TODO: fetch content from storage
-    slug |> to_string |> String.upcase
+  def handle_call({:rm, slug}, _from, state) do
+    state = state
+      |> Map.delete(slug)
+    {:reply, {:ok, state}, state}
   end
 
 end
