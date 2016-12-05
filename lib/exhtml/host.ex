@@ -66,8 +66,8 @@ defmodule Exhtml.Host do
   end
 
 
-  defp start_host_with_opts(_name, _opts) do
-    Exhtml.Table.start_link
+  defp start_host_with_opts(name, _opts) do
+    Exhtml.Table.start_link(name)
   end
 
 

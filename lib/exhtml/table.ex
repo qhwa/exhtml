@@ -6,20 +6,20 @@ defmodule Exhtml.Table do
 
   use GenServer
 
-  def start_link do
-    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+  def start_link(ns) do
+    GenServer.start_link(__MODULE__, %{}, name: ns)
   end
 
-  def get(slug) do
-    GenServer.call(__MODULE__, {:get, slug})
+  def get(ns, slug) do
+    GenServer.call(ns, {:get, slug})
   end
 
-  def set(slug, content) do
-    GenServer.call(__MODULE__, {:set, slug, content})
+  def set(ns, slug, content) do
+    GenServer.call(ns, {:set, slug, content})
   end
 
-  def rm(slug) do
-    GenServer.call(__MODULE__, {:rm, slug})
+  def rm(ns, slug) do
+    GenServer.call(ns, {:rm, slug})
   end
 
   def handle_call({:get, slug}, _from, state) do
