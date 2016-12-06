@@ -4,45 +4,38 @@ defmodule ExhtmlTest.HostTest do
   alias Exhtml.Host
 
   setup do
-    Host.start_link
-    :ok
+    {:ok, pid} = Host.start(:foo)
+    {:ok, %{server: pid}}
   end
 
-  test "get running status" do
-    assert Host.status(:foo) == :not_running
+
+  test "host process should be running", %{server: server} do
+    assert Process.alive?(server)
   end
 
-  test "start a host" do
-    :ok = Host.start(:foo, [])
+
+  test "get content by name and slug", %{server: server} do
+    assert Host.get_content(server, :hello_page) == nil
   end
 
-  test "get status of a host" do
-    Host.start(:foo, [])
-    assert Host.status(:foo) == :running
+
+  test "set content by name and slug", %{server: server} do
+    Host.set_content(server, :hello_page, "~~~")
+    assert Host.get_content(server, :hello_page) == "~~~"
   end
 
-  test "stop a host" do
-    :ok = Host.start(:foo, [])
-    Host.stop(:foo)
 
-    assert Host.status(:foo) == :not_running
+  test "fetch and set content by name and slug, with default storage", %{server: server} do
+    Host.update_content(server, "some-content")
+
+    assert Host.get_content(server, "some-content") == "default_content_for_some-content"
   end
 
-  test "get content by name and slug" do
-    Host.start(:foo, [])
-    assert Host.get_content(:foo, :hello_page) == nil
-  end
-
-  test "set content by name and slug" do
-    Host.start(:foo, [])
-    Host.set_content(:foo, :hello_page, "~~~")
-    assert Host.get_content(:foo, :hello_page) == "~~~"
-  end
 
   test "fetch and set content by name and slug" do
-    Host.start(:foo, storage_engine: Exhtml.Storage.TestStorage)
-    Host.update_content(:foo, "some-content")
+    {:ok, server} = Host.start(:bar, storage_engine: Exhtml.Storage.TestStorage)
+    Host.update_content(server, "some-content")
 
-    assert Host.get_content(:foo, "some-content") == "SOME-CONTENT"
+    assert Host.get_content(server, "some-content") == "SOME-CONTENT"
   end
 end

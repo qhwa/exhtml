@@ -11,102 +11,60 @@ defmodule Exhtml.Host do
   Starts a host with a name.
   """
   def start(name, opts \\ []) do
-    GenServer.call(__MODULE__, {:start, name, opts})
+    GenServer.start_link(__MODULE__, {name, opts})
   end
-
-
-  @doc """
-  Stops some host.
-  """
-  def stop(name) do
-    GenServer.call(__MODULE__, {:stop, name})
-  end
-
-
-  @doc """
-  Shows the status of some host.
-  """
-  def status(name) do
-    GenServer.call(__MODULE__, {:status, name})
-  end
-
 
   @doc """
   Gets html content from a host.
   """
-  def get_content(name, slug) do
-    GenServer.call(__MODULE__, {:get_content, name, slug})
+  def get_content(pid, slug) do
+    GenServer.call(pid, {:get_content, slug})
   end
 
 
   @doc """
   Sets html content to a host with a slug.
   """
-  def set_content(name, slug, value) do
-    GenServer.call(__MODULE__, {:set_content, name, slug, value})
+  def set_content(pid, slug, value) do
+    GenServer.call(pid, {:set_content, slug, value})
   end
 
 
   @doc """
   Fetchs and sets the content from the storage to a host's table.
   """
-  def update_content(name, slug) do
-    GenServer.call(__MODULE__, {:update_content, name, slug})
+  def update_content(pid, slug) do
+    GenServer.call(pid, {:update_content, slug})
   end
 
 
-  def start_link do
-    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+  ## Callbacks
+
+
+  def init({name, opts}) do
+    {table, storage} = start_host_with_opts(opts)
+    {:ok, {name, table, storage}}
   end
 
 
-  def handle_call({:start, name, opts}, _from, state) do
-    if is_running?(state, name) do
-      {:reply, {:already_started, state[name]}, state}
-    else
-      {:ok, pids} = start_host_with_opts(name, opts)
-      state = state |> Map.put(name, pids)
-      {:reply, :ok, state}
-    end
-  end
-
-
-  def handle_call({:stop, name}, _from, state) do
-    if is_running?(state, name) do
-      {table_pid, storage_pid} = state[name]
-      GenServer.stop(table_pid, :normal)
-      GenServer.stop(storage_pid, :normal)
-      {:reply, :ok, Map.delete(state, name)}
-    else
-      {:reply, :ok, state}
-    end
-  end
-
-
-  def handle_call({:status, name}, _from, state) do
-    status = if is_running?(state, name), do: :running, else: :not_running
-    {:reply, status, state}
-  end
-
-
-  def handle_call({:get_content, name, slug}, _from, state) do
+  def handle_call({:get_content, slug}, _from, state) do
     state
-      |> to_table_pid(name)
+      |> to_table_pid
       |> get_content_from_table(slug)
       |> to_reply(state)
   end
 
 
-  def handle_call({:set_content, name, slug, value}, _from, state) do
+  def handle_call({:set_content, slug, value}, _from, state) do
     state
-      |> to_table_pid(name)
+      |> to_table_pid
       |> set_content_to_table(slug, value)
       |> to_reply(state)
   end
 
 
-  def handle_call({:update_content, name, slug}, _from, state) do
-    {table_pid, storage_pid} = state[name]
+  def handle_call({:update_content, slug}, _from, state) do
+    {_name, table_pid, storage_pid} = state
     content = Exhtml.Storage.fetch(storage_pid, slug)
     {:ok, _} = Exhtml.Table.set(table_pid, slug, content)
 
@@ -114,26 +72,19 @@ defmodule Exhtml.Host do
   end
 
 
-  defp is_running?(state, name) do
-    Map.get(state, name) != nil
-  end
-
-
-  defp start_host_with_opts(_name, opts) do
+  defp start_host_with_opts(opts) do
     {:ok, table_pid}   = Exhtml.Table.start_link
     {:ok, storage_pid} = Exhtml.Storage.start_link(
       engine: opts[:storage_engine] || Exhtml.Storage.DefaultStorage
     )
 
-    {:ok, {table_pid, storage_pid}}
+    {table_pid, storage_pid}
   end
 
 
-  defp to_table_pid(state, name) do
-    case Map.get(state, name) do
-      {table_pid, _} -> table_pid
-      nil -> nil
-    end
+  defp to_table_pid(state) do
+    {_name, table_pid, _storage_pid} = state
+    table_pid
   end
 
 
