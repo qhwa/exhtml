@@ -47,6 +47,14 @@ defmodule Exhtml.Host do
   end
 
 
+  @doc """
+  Fetchs and sets the content from the storage to a host's table.
+  """
+  def update_content(name, slug) do
+    GenServer.call(__MODULE__, {:update_content, name, slug})
+  end
+
+
   def start_link do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
@@ -56,17 +64,18 @@ defmodule Exhtml.Host do
     if is_running?(state, name) do
       {:reply, {:already_started, state[name]}, state}
     else
-      {:ok, pid} = start_host_with_opts(name, opts)
-      state = state |> Map.put(name, pid)
-      {:reply, {:ok, pid}, state}
+      {:ok, pids} = start_host_with_opts(name, opts)
+      state = state |> Map.put(name, pids)
+      {:reply, :ok, state}
     end
   end
 
 
   def handle_call({:stop, name}, _from, state) do
     if is_running?(state, name) do
-      pid = state[name]
-      true = Process.exit(pid, :kill)
+      {table_pid, storage_pid} = state[name]
+      GenServer.stop(table_pid, :normal)
+      GenServer.stop(storage_pid, :normal)
       {:reply, :ok, Map.delete(state, name)}
     else
       {:reply, :ok, state}
@@ -82,7 +91,7 @@ defmodule Exhtml.Host do
 
   def handle_call({:get_content, name, slug}, _from, state) do
     state
-      |> to_pid(name)
+      |> to_table_pid(name)
       |> get_content_from_table(slug)
       |> to_reply(state)
   end
@@ -90,9 +99,18 @@ defmodule Exhtml.Host do
 
   def handle_call({:set_content, name, slug, value}, _from, state) do
     state
-      |> to_pid(name)
+      |> to_table_pid(name)
       |> set_content_to_table(slug, value)
       |> to_reply(state)
+  end
+
+
+  def handle_call({:update_content, name, slug}, _from, state) do
+    {table_pid, storage_pid} = state[name]
+    content = Exhtml.Storage.fetch(storage_pid, slug)
+    {:ok, _} = Exhtml.Table.set(table_pid, slug, content)
+
+    {:reply, content, state}
   end
 
 
@@ -101,13 +119,21 @@ defmodule Exhtml.Host do
   end
 
 
-  defp start_host_with_opts(_name, _opts) do
-    Exhtml.Table.start_link
+  defp start_host_with_opts(_name, opts) do
+    {:ok, table_pid}   = Exhtml.Table.start_link
+    {:ok, storage_pid} = Exhtml.Storage.start_link(
+      engine: opts[:storage_engine] || Exhtml.Storage.DefaultStorage
+    )
+
+    {:ok, {table_pid, storage_pid}}
   end
 
 
-  defp to_pid(state, name) do
-    Map.get(state, name)
+  defp to_table_pid(state, name) do
+    case Map.get(state, name) do
+      {table_pid, _} -> table_pid
+      nil -> nil
+    end
   end
 
 

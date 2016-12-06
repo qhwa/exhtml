@@ -3,11 +3,11 @@ defmodule Exhtml.Storage do
   use GenServer
 
   def start_link(engine: engine) do
-    GenServer.start_link(__MODULE__, [engine: engine], name: __MODULE__)
+    GenServer.start_link(__MODULE__, [engine: engine])
   end
 
-  def fetch(slug) do
-    GenServer.call(__MODULE__, {:fetch, slug})
+  def fetch(pid, slug) do
+    GenServer.call(pid, {:fetch, slug})
   end
 
   def handle_call({:fetch, slug}, _from, state = [engine: engine]) do

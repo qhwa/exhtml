@@ -4,11 +4,11 @@ defmodule Exhtml.StorageTest do
   doctest Exhtml.Storage
 
   setup do
-    Exhtml.Storage.start_link(engine: Exhtml.Storage.TestStorage)
-    :ok
+    {:ok, pid} = Exhtml.Storage.start_link(engine: Exhtml.Storage.TestStorage)
+    {:ok, %{pid: pid}}
   end
 
-  test "fetch content from storage" do
-    assert Exhtml.Storage.fetch("foo") == "FOO"
+  test "fetch content from storage", %{pid: pid} do
+    assert Exhtml.Storage.fetch(pid, "foo") == "FOO"
   end
 end
