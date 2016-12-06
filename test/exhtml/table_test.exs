@@ -5,7 +5,7 @@ defmodule Exhtml.TableTest do
   @namespace :test_namespace
 
   setup do
-    Exhtml.Table.start_link(@namespace)
+    Exhtml.Table.start_link(name: @namespace)
     Exhtml.Table.rm(@namespace, "foo")
     :ok
   end

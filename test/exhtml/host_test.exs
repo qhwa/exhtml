@@ -27,4 +27,15 @@ defmodule ExhtmlTest.HostTest do
 
     refute Process.alive?(pid)
   end
+
+  test "get content by name and slug" do
+    Exhtml.Host.start(:foo, [])
+    assert Exhtml.Host.get_content(:foo, :hello_page) == nil
+  end
+
+  test "set content by name and slug" do
+    Exhtml.Host.start(:foo, [])
+    Exhtml.Host.set_content(:foo, :hello_page, "~~~")
+    assert Exhtml.Host.get_content(:foo, :hello_page) == "~~~"
+  end
 end

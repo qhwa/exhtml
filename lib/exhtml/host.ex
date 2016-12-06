@@ -24,10 +24,26 @@ defmodule Exhtml.Host do
 
 
   @doc """
-  Show the status of some host
+  Shows the status of some host.
   """
   def status(name) do
     GenServer.call(__MODULE__, {:status, name})
+  end
+
+
+  @doc """
+  Gets html content from a host.
+  """
+  def get_content(name, slug) do
+    GenServer.call(__MODULE__, {:get_content, name, slug})
+  end
+
+
+  @doc """
+  Sets html content to a host with a slug.
+  """
+  def set_content(name, slug, value) do
+    GenServer.call(__MODULE__, {:set_content, name, slug, value})
   end
 
 
@@ -37,37 +53,86 @@ defmodule Exhtml.Host do
 
 
   def handle_call({:start, name, opts}, _from, state) do
-    case Map.get(state, name) do
-      nil ->
-        {:ok, pid} = start_host_with_opts(name, opts)
-        state = state |> Map.put(name, pid)
-        {:reply, {:ok, pid}, state}
-      _ ->
-        {:reply, {:already_started, state[name]}, state}
+    if is_running?(state, name) do
+      {:reply, {:already_started, state[name]}, state}
+    else
+      {:ok, pid} = start_host_with_opts(name, opts)
+      state = state |> Map.put(name, pid)
+      {:reply, {:ok, pid}, state}
     end
   end
 
 
   def handle_call({:stop, name}, _from, state) do
-    case Map.get(state, name) do
-      pid when is_pid(pid) ->
-        true = Process.exit(pid, :kill)
-        {:reply, :ok, Map.delete(state, name)}
-
-      nil ->
-        {:reply, :ok, state}
+    if is_running?(state, name) do
+      pid = state[name]
+      true = Process.exit(pid, :kill)
+      {:reply, :ok, Map.delete(state, name)}
+    else
+      {:reply, :ok, state}
     end
   end
 
 
   def handle_call({:status, name}, _from, state) do
-    status = if Map.get(state, name), do: :running, else: :not_running
+    status = if is_running?(state, name), do: :running, else: :not_running
     {:reply, status, state}
   end
 
 
-  defp start_host_with_opts(name, _opts) do
-    Exhtml.Table.start_link(name)
+  def handle_call({:get_content, name, slug}, _from, state) do
+    state
+      |> to_pid(name)
+      |> get_content_from_table(slug)
+      |> to_reply(state)
+  end
+
+
+  def handle_call({:set_content, name, slug, value}, _from, state) do
+    state
+      |> to_pid(name)
+      |> set_content_to_table(slug, value)
+      |> to_reply(state)
+  end
+
+
+  defp is_running?(state, name) do
+    Map.get(state, name) != nil
+  end
+
+
+  defp start_host_with_opts(_name, _opts) do
+    Exhtml.Table.start_link
+  end
+
+
+  defp to_pid(state, name) do
+    Map.get(state, name)
+  end
+
+
+  defp get_content_from_table(nil, _) do
+    {:error, :not_running}
+  end
+
+
+  defp get_content_from_table(pid, slug) do
+    Exhtml.Table.get(pid, slug)
+  end
+
+
+  defp to_reply(ret, state) do
+    {:reply, ret, state}
+  end
+
+
+  defp set_content_to_table(nil, _, _) do
+    {:error, :not_running}
+  end
+
+
+  defp set_content_to_table(pid, slug, content) do
+    Exhtml.Table.set(pid, slug, content)
   end
 
 

@@ -6,8 +6,8 @@ defmodule Exhtml.Table do
 
   use GenServer
 
-  def start_link(ns) do
-    GenServer.start_link(__MODULE__, %{}, name: ns)
+  def start_link(opts \\ []) do
+    GenServer.start_link(__MODULE__, %{}, opts)
   end
 
   def get(ns, slug) do
