@@ -2,7 +2,6 @@ defmodule Exhtml.Host do
 
   @moduledoc """
   Exhtml.Host represents the content server.
-  You can start/stop/status a host.
   """
 
   use GenServer
@@ -10,8 +9,8 @@ defmodule Exhtml.Host do
   @doc """
   Starts a host with a name.
   """
-  def start(name, opts \\ []) do
-    GenServer.start_link(__MODULE__, {name, opts})
+  def start(opts \\ []) do
+    GenServer.start_link(__MODULE__, opts)
   end
 
   @doc """
@@ -41,9 +40,9 @@ defmodule Exhtml.Host do
   ## Callbacks
 
 
-  def init({name, opts}) do
+  def init(opts) do
     {table, storage} = start_host_with_opts(opts)
-    {:ok, {name, table, storage}}
+    {:ok, {table, storage}}
   end
 
 
@@ -64,7 +63,7 @@ defmodule Exhtml.Host do
 
 
   def handle_call({:update_content, slug}, _from, state) do
-    {_name, table_pid, storage_pid} = state
+    {table_pid, storage_pid} = state
     content = Exhtml.Storage.fetch(storage_pid, slug)
     {:ok, _} = Exhtml.Table.set(table_pid, slug, content)
 
@@ -83,7 +82,7 @@ defmodule Exhtml.Host do
 
 
   defp to_table_pid(state) do
-    {_name, table_pid, _storage_pid} = state
+    {table_pid, _storage_pid} = state
     table_pid
   end
 

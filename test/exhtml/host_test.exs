@@ -4,7 +4,7 @@ defmodule ExhtmlTest.HostTest do
   alias Exhtml.Host
 
   setup do
-    {:ok, pid} = Host.start(:foo)
+    {:ok, pid} = Host.start
     {:ok, %{server: pid}}
   end
 
@@ -33,7 +33,7 @@ defmodule ExhtmlTest.HostTest do
 
 
   test "fetch and set content by name and slug" do
-    {:ok, server} = Host.start(:bar, storage_engine: Exhtml.Storage.TestStorage)
+    {:ok, server} = Host.start(storage_engine: Exhtml.Storage.TestStorage)
     Host.update_content(server, "some-content")
 
     assert Host.get_content(server, "some-content") == "SOME-CONTENT"
