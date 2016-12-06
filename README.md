@@ -1,6 +1,6 @@
 # Exhtml
 
-Exhtml is a library that handle HTML page serving.
+Exhtml is a library that handles HTML page serving.
 There are some benifts to have a dynamic HTML page host rather than static server:
 
 1. it's easy to deploy a small number of pages.
