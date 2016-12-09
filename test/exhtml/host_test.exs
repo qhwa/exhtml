@@ -38,4 +38,12 @@ defmodule ExhtmlTest.HostTest do
 
     assert Host.get_content(server, "some-content") == "SOME-CONTENT"
   end
+
+
+  test "delete content by name and slug", %{server: server} do
+    Host.update_content(server, "some-content")
+    Host.delete_content(server, "some-content")
+
+    refute Host.get_content(server, "some-content")
+  end
 end
