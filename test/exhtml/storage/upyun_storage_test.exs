@@ -18,7 +18,6 @@ defmodule ExhtmlTest.Storage.UpyunStorageTest do
     {:ok, %{path: path, module: module, policy: policy}}
   end
 
-  @tag underview: true
   test ".fetch", %{path: path, module: module, policy: policy} do
     content = "~HELLO~"
     Upyun.put(policy, content, upyun_path(path))

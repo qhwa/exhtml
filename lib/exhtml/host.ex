@@ -37,6 +37,14 @@ defmodule Exhtml.Host do
   end
 
 
+  @doc """
+  Deletes the content from a host.
+  """
+  def delete_content(pid, slug) do
+    GenServer.call(pid, {:delete_content, slug})
+  end
+
+
   ## Callbacks
 
 
@@ -68,6 +76,14 @@ defmodule Exhtml.Host do
     {:ok, _} = Exhtml.Table.set(table_pid, slug, content)
 
     {:reply, content, state}
+  end
+
+
+  def handle_call({:delete_content, slug}, _from, state) do
+    state
+      |> elem(0)
+      |> Exhtml.Table.rm(slug)
+      |> to_reply(state)
   end
 
 
