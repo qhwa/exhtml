@@ -6,7 +6,7 @@ defmodule Exhtml.Registry do
 
   # APIs
 
-  def start do
+  def start_link(_opts \\ []) do
     GenServer.start_link(__MODULE__, [], name: @name)
   end
 
@@ -24,7 +24,7 @@ defmodule Exhtml.Registry do
   # Callbacks
 
   def init(_opts) do
-    {:ok, %{}}
+    {:ok, Exhtml.Stash.registry_state || %{}}
   end
 
 
@@ -36,6 +36,11 @@ defmodule Exhtml.Registry do
   
   def handle_call({:whereis, key}, _from, state) do
     {:reply, Map.get(state, key), state}
+  end
+
+
+  def terminate(_, state) do
+    Exhtml.Stash.save_registry(state)
   end
 
 end

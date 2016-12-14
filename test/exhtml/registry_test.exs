@@ -5,7 +5,8 @@ defmodule Exhtml.RegistryTest do
   doctest Registry
 
   setup do
-    Registry.start
+    Exhtml.Stash.start_link %{a: 1}, %{}
+    Registry.start_link
     :ok
   end
 
@@ -17,5 +18,9 @@ defmodule Exhtml.RegistryTest do
   test "register a pid" do
     Registry.register(:registry_store, GenServer.whereis(:registry))
     assert GenServer.whereis(:registry) == Registry.whereis(:registry_store)
+  end
+
+  test "recover from the stash" do
+    assert Registry.whereis(:a) == 1
   end
 end
