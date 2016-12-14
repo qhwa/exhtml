@@ -9,7 +9,7 @@ defmodule Exhtml.Host do
   @doc """
   Starts a host with a name.
   """
-  def start(opts \\ []) do
+  def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts)
   end
 
@@ -126,7 +126,5 @@ defmodule Exhtml.Host do
   defp set_content_to_table(pid, slug, content) do
     Exhtml.Table.set(pid, slug, content)
   end
-
-
 
 end
