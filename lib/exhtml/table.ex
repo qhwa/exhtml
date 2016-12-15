@@ -41,7 +41,7 @@ defmodule Exhtml.Table do
     {:reply, {:ok, state}, state}
   end
 
-  def terminal(_, state) do
+  def terminate(_, state) do
     Exhtml.Stash.save_table(state)
   end
 
