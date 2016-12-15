@@ -8,9 +8,9 @@ defmodule Exhtml.Supervisor do
   end
 
 
-  defp start_workers(sup, arg) do
-    registry_state = %{a: 1}
-    table_state = %{slug: "Value"}
+  defp start_workers(sup, _arg) do
+    registry_state = %{ping: :pong}
+    table_state    = %{ping: :pong}
 
     {:ok, _} = Supervisor.start_child(
       sup,

@@ -11,7 +11,7 @@ defmodule Exhtml.SupervisorTest do
 
 
   test "registry should be started" do
-    assert Exhtml.Registry.whereis(:a) == 1
+    assert Exhtml.Registry.whereis(:ping) == :pong
   end
 
   test "host should be started" do
@@ -21,6 +21,6 @@ defmodule Exhtml.SupervisorTest do
   end
 
   test "table should start from stash" do
-    assert Exhtml.Host.get_content(:exhtml_host, :slug) == "Value"
+    assert Exhtml.Host.get_content(:exhtml_host, :ping) == :pong
   end
 end
