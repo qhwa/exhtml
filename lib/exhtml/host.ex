@@ -72,7 +72,7 @@ defmodule Exhtml.Host do
   def handle_call({:update_content, slug}, _from, state) do
     {table_pid, storage_pid} = state
     content = Exhtml.Storage.fetch(storage_pid, slug)
-    {:ok, _} = Exhtml.Table.set(table_pid, slug, content)
+    :ok = Exhtml.Table.set(table_pid, slug, content)
 
     {:reply, content, state}
   end
