@@ -9,12 +9,15 @@ defmodule Exhtml.Supervisor do
 
 
   defp start_workers(sup, arg) do
-    Supervisor.start_child(
+    registry_state = %{a: 1}
+    table_state = %{slug: "Value"}
+
+    {:ok, _} = Supervisor.start_child(
       sup,
-      worker(Exhtml.Stash, [%{a: 1}, %{slug: "Value"}])
+      worker(Exhtml.Stash, [registry_state, table_state])
     )
 
-    Supervisor.start_child(
+    {:ok, _} = Supervisor.start_child(
       sup,
       supervisor(Exhtml.Registry.Supervisor, [])
     )

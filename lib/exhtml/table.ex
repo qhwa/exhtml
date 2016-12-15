@@ -6,8 +6,8 @@ defmodule Exhtml.Table do
 
   use GenServer
 
-  def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, %{}, opts)
+  def start_link(_opts \\ []) do
+    GenServer.start_link(__MODULE__, Exhtml.Stash.table_state)
   end
 
   def get(ns, slug) do
@@ -39,6 +39,10 @@ defmodule Exhtml.Table do
     state = state
       |> Map.delete(slug)
     {:reply, {:ok, state}, state}
+  end
+
+  def terminal(_, state) do
+    Exhtml.Stash.save_table(state)
   end
 
 end
