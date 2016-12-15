@@ -5,7 +5,14 @@ defmodule Exhtml.Stash do
   @name __MODULE__
 
   def start_link(registry_state, table_state) do
-    GenServer.start_link(__MODULE__, {registry_state, table_state}, name: @name)
+    ret = GenServer.start_link(__MODULE__, {registry_state, table_state}, name: @name)
+      |> ensure_fully_started_when_test(Mix.env)
+
+    case ret do
+      {:ok, _} -> ret
+      :retry ->
+        start_link(registry_state, table_state)
+    end
   end
 
 
@@ -54,4 +61,20 @@ defmodule Exhtml.Stash do
   def handle_call(:get_table_state, _from, current = {_, table}) do
     {:reply, table, current}
   end
+
+
+  defp ensure_fully_started_when_test(ret, :test) do
+    case ret do
+      {:ok, _} -> ret
+      {:error, {:already_started, _}} -> 
+        :timer.sleep 50
+        :retry
+    end
+  end
+
+
+  defp ensure_fully_started_when_test(ret, _) do
+    ret
+  end
+
 end
