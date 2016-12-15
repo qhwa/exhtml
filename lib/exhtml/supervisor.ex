@@ -19,9 +19,9 @@ defmodule Exhtml.Supervisor do
       supervisor(Exhtml.Registry.Supervisor, [])
     )
 
-    Supervisor.start_child(
+    {:ok, _} = Supervisor.start_child(
       sup,
-      worker(Exhtml.Host, [])
+      supervisor(Exhtml.Host.Supervisor, [[name: :exhtml_host]])
     )
     {:ok, sup}
   end

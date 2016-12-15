@@ -7,10 +7,10 @@ defmodule Exhtml.Host do
   use GenServer
 
   @doc """
-  Starts a host with a name.
+  Starts a host.
   """
   def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, opts)
+    GenServer.start_link(__MODULE__, opts, name: opts[:name])
   end
 
   @doc """
@@ -46,7 +46,6 @@ defmodule Exhtml.Host do
 
 
   ## Callbacks
-
 
   def init(opts) do
     {table, storage} = start_host_with_opts(opts)
@@ -88,9 +87,6 @@ defmodule Exhtml.Host do
 
 
   defp start_host_with_opts(opts) do
-    # Table crash 并重启后，这里的 table_pid 没有及时更新
-    # 会造成问题
-    # FIXME: 修复这里的问题
     {:ok, table_pid}   = Exhtml.Table.start_link
     {:ok, storage_pid} = Exhtml.Storage.start_link(
       engine: opts[:storage_engine] || Exhtml.Storage.DefaultStorage
