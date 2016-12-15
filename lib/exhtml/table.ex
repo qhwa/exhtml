@@ -32,7 +32,7 @@ defmodule Exhtml.Table do
         slug,
         content
       )
-    {:reply, {:ok, state}, state}
+    {:reply, :ok, state}
   end
 
   def handle_call({:rm, slug}, _from, state) do
