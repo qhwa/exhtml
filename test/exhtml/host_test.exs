@@ -16,6 +16,7 @@ defmodule ExhtmlTest.HostTest do
 
 
   test "get content by name and slug", %{server: server} do
+    Host.delete_content(server, :hello_page)
     assert Host.get_content(server, :hello_page) == nil
   end
 
