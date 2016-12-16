@@ -75,8 +75,4 @@ defmodule Exhtml.Table do
     content
   end
 
-  def terminate(_, state) do
-    Exhtml.Stash.save_table(state)
-  end
-
 end
