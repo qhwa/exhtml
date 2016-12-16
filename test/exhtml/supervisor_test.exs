@@ -20,7 +20,4 @@ defmodule Exhtml.SupervisorTest do
     assert GenServer.whereis(:test_host)
   end
 
-  test "table should start from stash" do
-    assert Exhtml.Host.get_content(:exhtml_host, :ping) == :pong
-  end
 end
