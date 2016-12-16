@@ -1,4 +1,8 @@
 defmodule Exhtml.Supervisor do
+
+  @moduledoc """
+  Supervisor manages the supervisor tree of Exhtml.
+  """
   
   use Supervisor
 
@@ -19,12 +23,12 @@ defmodule Exhtml.Supervisor do
 
     {:ok, _} = Supervisor.start_child(
       sup,
-      supervisor(Exhtml.Registry.Supervisor, [])
+      worker(Exhtml.Registry, [])
     )
 
     {:ok, _} = Supervisor.start_child(
       sup,
-      supervisor(Exhtml.Host.Supervisor, [[name: :exhtml_host]])
+      worker(Exhtml.Host, [[name: :exhtml_host]])
     )
     {:ok, sup}
   end

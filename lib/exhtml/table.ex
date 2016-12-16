@@ -64,7 +64,7 @@ defmodule Exhtml.Table do
   end
 
   defp db_result(slug) do
-    :mnesia.dirty_read(@table_name_in_db, slug) |> List.first
+    @table_name_in_db |> :mnesia.dirty_read(slug) |> List.first
   end
 
   defp db_to_val(nil) do
