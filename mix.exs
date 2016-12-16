@@ -27,7 +27,9 @@ defmodule Exhtml.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:upyun, github: "qhwa/elixir-upyun", branch: "v0.2-dev", only: [:test, :dev]}]
-    # [{:upyun, path: "../elixir-upyun", only: [:test, :dev]}]
+    [
+      {:upyun, github: "qhwa/elixir-upyun", branch: "v0.2-dev", only: [:test, :dev]},
+      {:credo, "~> 0.4", only: [:dev]}
+    ]
   end
 end

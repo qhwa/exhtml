@@ -14,10 +14,4 @@ defmodule Exhtml.SupervisorTest do
     assert Exhtml.Registry.whereis(:ping) == :pong
   end
 
-  test "host should be started" do
-    {:ok, pid} = Exhtml.Host.Supervisor.start_link name: :test_host
-    assert Process.alive?(pid)
-    assert GenServer.whereis(:test_host)
-  end
-
 end

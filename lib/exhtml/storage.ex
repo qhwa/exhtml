@@ -1,4 +1,9 @@
 defmodule Exhtml.Storage do
+
+  @moduledoc """
+  Storage provides a `fetch` method used to fetch content from outside
+  source.
+  """
   
   use GenServer
 

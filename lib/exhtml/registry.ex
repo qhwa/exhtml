@@ -1,5 +1,9 @@
 defmodule Exhtml.Registry do
 
+  @moduledoc """
+  Registry holds information of mapping of PIDs to names.
+  """
+
   use GenServer
   
   @name :registry

@@ -1,17 +1,23 @@
 defmodule Exhtml.Stash do
+
+  @moduledoc """
+  Stash save important states. Processes save their states to stash
+  on crashing. They can restore states from Stash after restarts.
+  """
   
   use GenServer
 
   @name __MODULE__
 
-  def start_link(registry_state, table_state) do
-    ret = GenServer.start_link(__MODULE__, {registry_state, table_state}, name: @name)
+  def start_link(reg_st, table_st) do
+    ret = __MODULE__
+      |> GenServer.start_link({reg_st, table_st}, name: @name)
       |> ensure_fully_started_when_test(Mix.env)
 
     case ret do
       {:ok, _} -> ret
       :retry ->
-        start_link(registry_state, table_state)
+        start_link(reg_st, table_st)
     end
   end
 
@@ -43,8 +49,8 @@ defmodule Exhtml.Stash do
   end
 
 
-  def handle_call({:save_registry_state, reg}, _from, {_, table_state}) do
-    {:reply, :ok, {reg, table_state}}
+  def handle_call({:save_registry_state, reg}, _from, {_, table_st}) do
+    {:reply, :ok, {reg, table_st}}
   end
 
 
