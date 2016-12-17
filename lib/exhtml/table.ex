@@ -37,7 +37,7 @@ defmodule Exhtml.Table do
   defp start_db do
     :mnesia.create_schema([node])
     :mnesia.start
-    :mnesia.create_table @table_name_in_db, attributes: [:slug, :content]
+    :mnesia.create_table @table_name_in_db, attributes: [:slug, :content], disc_copies: [node]
     :mnesia.wait_for_tables [@table_name_in_db], 5000
   end
 
