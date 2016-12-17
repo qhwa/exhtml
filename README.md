@@ -44,9 +44,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
       # content_fetcher: &MyContentFetcher.fetch/1,
 
       # or use an anonymous function:
-      # content_fetcher: fn slug -> "#{slug} content on remote" end,
-      # where exhtml is going to save contents
-      content_fetcher: nil,
+      content_fetcher: fn slug -> "#{slug} content on remote" end,
 
       # where to store contents on disk:
       data_dir: "/home/data/exhtml_contents"

@@ -9,7 +9,6 @@ config :exhtml,
 
   # or use an anonymous function:
   # content_fetcher: fn slug -> "#{slug} content on remote" end,
-  # where exhtml is going to save contents
   content_fetcher: nil,
 
   # where to store contents on disk:
