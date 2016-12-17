@@ -20,7 +20,7 @@ defmodule Exhtml.Storage do
   end
 
   def handle_call({:fetch, slug}, _from, state) do
-    content = fetch_content(slug, state[:fetcher], state[:engine])
+    content = fetch_content(slug, state[:fetcher])
     {:reply, content, state}
   end
 
@@ -28,15 +28,15 @@ defmodule Exhtml.Storage do
     {:reply, :ok, Keyword.put(state, :fetcher, f)}
   end
 
-  defp fetch_content(_, nil, nil) do
+  defp fetch_content(_, nil) do
     nil
   end
 
-  defp fetch_content(slug, fetcher, _) when is_function(fetcher) do
+  defp fetch_content(slug, fetcher) when is_function(fetcher) do
     fetcher.(slug)
   end
 
-  defp fetch_content(slug, nil, engine) do
+  defp fetch_content(slug, engine) when is_atom(engine) do
     apply engine, :fetch, [slug]
   end
 

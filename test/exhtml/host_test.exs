@@ -35,7 +35,7 @@ defmodule ExhtmlTest.HostTest do
 
 
   test "fetch and set content by name and slug" do
-    {:ok, server} = Host.start_link(storage_engine: Exhtml.Storage.TestStorage)
+    {:ok, server} = Host.start_link(content_fetcher: Exhtml.Storage.TestStorage)
     Host.update_content(server, "some-content")
 
     assert Host.get_content(server, "some-content") == "SOME-CONTENT"

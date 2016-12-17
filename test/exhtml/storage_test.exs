@@ -4,7 +4,7 @@ defmodule Exhtml.StorageTest do
   doctest Exhtml.Storage
 
   setup do
-    {:ok, pid} = Exhtml.Storage.start_link(engine: Exhtml.Storage.TestStorage)
+    {:ok, pid} = Exhtml.Storage.start_link(fetcher: Exhtml.Storage.TestStorage)
     {:ok, %{pid: pid}}
   end
 
