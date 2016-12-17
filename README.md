@@ -1,5 +1,7 @@
 # Exhtml
 
+![travis-status](https://travis-ci.org/qhwa/exhtml.svg?branch=master)
+
 > This project is under active developement and is unreliable at this moment. DO NOT use it in your production.
 
 Exhtml is a library that handles HTML page serving.
