@@ -7,8 +7,8 @@ defmodule Exhtml.Storage do
   
   use GenServer
 
-  def start_link(engine: engine) do
-    GenServer.start_link(__MODULE__, [engine: engine])
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts)
   end
 
   def fetch(pid, slug) do
@@ -28,7 +28,7 @@ defmodule Exhtml.Storage do
     {:reply, :ok, Keyword.put(state, :fetcher, f)}
   end
 
-  defp fetch_content(slug, nil, nil) do
+  defp fetch_content(_, nil, nil) do
     nil
   end
 

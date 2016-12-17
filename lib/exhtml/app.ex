@@ -12,14 +12,14 @@ defmodule Exhtml.App do
     import Supervisor.Spec
 
     children = [
-      supervisor(Exhtml.Supervisor, [])
+      supervisor(Exhtml.Supervisor, [Application.get_all_env :exhtml])
     ]
 
     Logger.debug "Exhtml application started"
     Supervisor.start_link(children, strategy: :one_for_one, name: __MODULE__)
   end
 
-  def stop(state) do
+  def stop(_state) do
     debug("Exhtml application stopped")
   end
 

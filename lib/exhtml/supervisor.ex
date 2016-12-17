@@ -12,7 +12,7 @@ defmodule Exhtml.Supervisor do
   end
 
 
-  defp start_workers(sup, _arg) do
+  defp start_workers(sup, opts) do
     registry_state = %{ping: :pong}
     table_state    = %{ping: :pong}
 
@@ -28,7 +28,10 @@ defmodule Exhtml.Supervisor do
 
     {:ok, _} = Supervisor.start_child(
       sup,
-      worker(Exhtml.Host, [[name: :exhtml_host]])
+      worker(Exhtml.Host, [[
+        name: :exhtml_host,
+        content_fetcher: opts[:content_fetcher]
+      ]])
     )
 
     {:ok, sup}
