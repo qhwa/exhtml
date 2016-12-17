@@ -9,36 +9,28 @@ defmodule Exhtml.Stash do
 
   @name __MODULE__
 
-  def start_link(reg_st, table_st) do
-    ret = __MODULE__
-      |> GenServer.start_link({reg_st, table_st}, name: @name)
-      |> ensure_fully_started_when_test(Mix.env)
-
-    case ret do
-      {:ok, _} -> ret
-      :retry ->
-        start_link(reg_st, table_st)
-    end
+  def start_link(reg_st, table_st, opts \\ []) do
+    GenServer.start_link(__MODULE__, {reg_st, table_st}, name: opts[:name] || @name)
   end
 
 
-  def save_registry(state) do
-    GenServer.call(@name, {:save_registry_state, state})
+  def save_registry(pid \\ @name, state) do
+    GenServer.call(pid, {:save_registry_state, state})
   end
 
 
-  def registry_state do
-    GenServer.call(@name, :get_registry_state)
+  def registry_state(pid \\ @name) do
+    GenServer.call(pid, :get_registry_state)
   end
 
 
-  def save_table(state) do
-    GenServer.call(@name, {:save_table_state, state})
+  def save_table(pid \\ @name, state) do
+    GenServer.call(pid, {:save_table_state, state})
   end
 
 
-  def table_state do
-    GenServer.call(@name, :get_table_state)
+  def table_state(pid \\ @name) do
+    GenServer.call(pid, :get_table_state)
   end
 
 
@@ -66,21 +58,6 @@ defmodule Exhtml.Stash do
 
   def handle_call(:get_table_state, _from, current = {_, table}) do
     {:reply, table, current}
-  end
-
-
-  defp ensure_fully_started_when_test(ret, :test) do
-    case ret do
-      {:ok, _} -> ret
-      {:error, {:already_started, _}} -> 
-        :timer.sleep 50
-        :retry
-    end
-  end
-
-
-  defp ensure_fully_started_when_test(ret, _) do
-    ret
   end
 
 end

@@ -15,7 +15,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
     ```elixir
     def deps do
-      [{:exhtml, "~> 0.1.0"}]
+      [{:exhtml, "~> 0.1.0-beta.1"}]
     end
     ```
 

@@ -30,6 +30,7 @@ defmodule Exhtml.Supervisor do
       sup,
       worker(Exhtml.Host, [[name: :exhtml_host]])
     )
+
     {:ok, sup}
   end
 

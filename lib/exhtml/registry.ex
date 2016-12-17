@@ -10,8 +10,8 @@ defmodule Exhtml.Registry do
 
   # APIs
 
-  def start_link(_opts \\ []) do
-    GenServer.start_link(__MODULE__, [], name: @name)
+  def start_link(opts \\ []) do
+    GenServer.start_link(__MODULE__, [], name: opts[:name] || @name)
   end
 
 
