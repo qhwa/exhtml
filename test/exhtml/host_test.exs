@@ -48,4 +48,11 @@ defmodule ExhtmlTest.HostTest do
 
     refute Host.get_content(server, "some-content")
   end
+
+  
+  test "dynamicly set content fetcher", %{server: server} do
+    Host.set_content_fetcher(server, fn slug -> slug end)
+    Host.update_content(server, "aye")
+    assert Host.get_content(server, "aye") == "aye"
+  end
 end

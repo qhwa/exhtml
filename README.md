@@ -27,3 +27,25 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
     end
     ```
 
+## Setup
+
+TODO: allow custom configuration
+
+## Usage
+
+```elixir
+# set content fetcher
+Exhtml.set_content_fetcher fn slug ->
+  # fetch content by slug from remote
+  # ...
+  "#{slug} content on remote"
+end
+
+# update content.
+# Notice: contents live in memory and automaticly persisted in disk.
+Exhtml.update_content :my_page
+
+# later, get content:
+Exhtml.get_content :my_page
+#=> "my_page content on remote"
+```
