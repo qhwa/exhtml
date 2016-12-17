@@ -18,5 +18,5 @@ erl_crash.dump
 
 *.beam
 
-Mnesia.*/
+/exhtml_contents
 .mix_tasks

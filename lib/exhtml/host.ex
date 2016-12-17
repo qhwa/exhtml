@@ -104,7 +104,10 @@ defmodule Exhtml.Host do
 
 
   defp start_host_with_opts(opts) do
-    {:ok, table_pid}   = Exhtml.Table.start_link
+    {:ok, table_pid}   = Exhtml.Table.start_link(
+      data_dir: opts[:data_dir]
+    )
+
     {:ok, storage_pid} = Exhtml.Storage.start_link(
       fetcher: opts[:content_fetcher] || Exhtml.Storage.DefaultStorage,
     )
