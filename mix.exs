@@ -3,7 +3,7 @@ defmodule Exhtml.Mixfile do
 
   def project do
     [app: :exhtml,
-     version: "0.1.0",
+     version: "0.1.0-beta.1",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -14,7 +14,10 @@ defmodule Exhtml.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [
+      applications: [:logger],
+      mod: {Exhtml.App, []}
+    ]
   end
 
   # Dependencies can be Hex packages:
@@ -27,7 +30,9 @@ defmodule Exhtml.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:upyun, github: "qhwa/elixir-upyun", branch: "v0.2-dev", only: [:test, :dev]}]
-    # [{:upyun, path: "../elixir-upyun", only: [:test, :dev]}]
+    [
+      {:upyun, github: "qhwa/elixir-upyun", branch: "v0.2-dev", only: [:test, :dev]},
+      {:credo, "~> 0.4", only: [:dev]}
+    ]
   end
 end

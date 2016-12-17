@@ -4,7 +4,8 @@ defmodule ExhtmlTest.HostTest do
   alias Exhtml.Host
 
   setup do
-    {:ok, pid} = Host.start
+    Exhtml.Stash.start_link(%{}, %{})
+    {:ok, pid} = Host.start_link([])
     {:ok, %{server: pid}}
   end
 
@@ -15,6 +16,7 @@ defmodule ExhtmlTest.HostTest do
 
 
   test "get content by name and slug", %{server: server} do
+    Host.delete_content(server, :hello_page)
     assert Host.get_content(server, :hello_page) == nil
   end
 
@@ -33,9 +35,24 @@ defmodule ExhtmlTest.HostTest do
 
 
   test "fetch and set content by name and slug" do
-    {:ok, server} = Host.start(storage_engine: Exhtml.Storage.TestStorage)
+    {:ok, server} = Host.start_link(content_fetcher: Exhtml.Storage.TestStorage)
     Host.update_content(server, "some-content")
 
     assert Host.get_content(server, "some-content") == "SOME-CONTENT"
+  end
+
+
+  test "delete content by name and slug", %{server: server} do
+    Host.update_content(server, "some-content")
+    Host.delete_content(server, "some-content")
+
+    refute Host.get_content(server, "some-content")
+  end
+
+  
+  test "dynamicly set content fetcher", %{server: server} do
+    Host.set_content_fetcher(server, fn slug -> slug end)
+    Host.update_content(server, "aye")
+    assert Host.get_content(server, "aye") == "aye"
   end
 end

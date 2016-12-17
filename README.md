@@ -1,5 +1,7 @@
 # Exhtml
 
+> This project is under active developement and is unreliable at this moment. DO NOT use it in your production.
+
 Exhtml is a library that handles HTML page serving.
 There are some benifts to have a dynamic HTML page host rather than static server:
 
@@ -15,7 +17,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
     ```elixir
     def deps do
-      [{:exhtml, "~> 0.1.0"}]
+      [{:exhtml, "~> 0.1.0-beta.1"}]
     end
     ```
 
@@ -26,4 +28,27 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
       [applications: [:exhtml]]
     end
     ```
+
+  3. (optional) Add configuration into your project:
+
+    ```elixir
+    use Mix.config
+
+    # `content_fetcher` can either be a module or a function.
+    # `MyContentFetcher.fetch` accepts a key and returns content for the key.
+    config :exhtml, content_fetcher: &MyContentFetcher.fetch/1
+    ```
+
+## Usage
+
+```elixir
+# update content.
+# Notice: contents live in memory and automaticly persisted in disk.
+Exhtml.update_content :my_page
+
+# later, get content:
+Exhtml.get_content :my_page
+#=> "my_page content on remote"
+```
+
 

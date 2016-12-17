@@ -2,21 +2,20 @@ defmodule Exhtml.TableTest do
   use ExUnit.Case
 
   doctest Exhtml.Table
-  @namespace :test_namespace
 
   setup do
-    Exhtml.Table.start_link(name: @namespace)
-    Exhtml.Table.rm(@namespace, "foo")
-    :ok
+    Exhtml.Stash.start_link(%{}, %{})
+    {:ok, pid} = Exhtml.Table.start_link
+    Exhtml.Table.rm(pid, "foo")
+    {:ok, %{pid: pid}}
   end
 
-  test "get nonexisting content" do
-    assert Exhtml.Table.get(@namespace, "nonexist") == nil
+  test "get nonexisting content", %{pid: pid} do
+    assert Exhtml.Table.get(pid, "nonexist") == nil
   end
 
-  test "set content" do
-    {:ok, state} = Exhtml.Table.set(@namespace, "foo", "bar")
-    assert state["foo"] == "bar"
-    assert Exhtml.Table.get(@namespace, "foo") == "bar"
+  test "set content", %{pid: pid} do
+    :ok = Exhtml.Table.set(pid, "foo", "bar")
+    assert Exhtml.Table.get(pid, "foo") == "bar"
   end
 end

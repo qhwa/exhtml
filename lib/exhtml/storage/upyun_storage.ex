@@ -1,5 +1,7 @@
 defmodule Exhtml.Storage.UpyunStorage do
 
+  @lint {Credo.Check.Readability.ModuleNames, false}
+
   @moduledoc """
   UpyunStorage generater.
 
@@ -14,6 +16,7 @@ defmodule Exhtml.Storage.UpyunStorage do
   defmacro setup(policy, slug_to_path) do
     quote do
       name = [unquote(policy), unquote(slug_to_path)]
+      name = name
         |> inspect
         |> String.to_atom
 
@@ -29,7 +32,7 @@ defmodule Exhtml.Storage.UpyunStorage do
       end
 
       # we only need the module name
-      |> elem(1)
+      name
     end
   end
 

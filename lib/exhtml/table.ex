@@ -4,10 +4,14 @@ defmodule Exhtml.Table do
   Exhtml.Table is a group of HTML contents.
   """
 
+  @table_name_in_db :exhtml_contents
+
   use GenServer
 
-  def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, %{}, opts)
+  # APIs
+
+  def start_link(_opts \\ []) do
+    GenServer.start_link(__MODULE__, [])
   end
 
   def get(ns, slug) do
@@ -22,23 +26,53 @@ defmodule Exhtml.Table do
     GenServer.call(ns, {:rm, slug})
   end
 
+
+  # Callbacks
+
+  def init(_opts) do
+    start_db
+    {:ok, %{}}
+  end
+
+  defp start_db do
+    :mnesia.create_schema([node])
+    :mnesia.start
+    :mnesia.create_table @table_name_in_db, attributes: [:slug, :content], disc_copies: [node]
+    :mnesia.wait_for_tables [@table_name_in_db], 5000
+  end
+
   def handle_call({:get, slug}, _from, state) do
-    {:reply, Map.get(state, slug), state}
+    ret = slug
+      |> db_result
+      |> db_to_val
+
+    {:reply, ret, state}
   end
 
   def handle_call({:set, slug, content}, _from, state) do
-    state = state
-      |> Map.put(
-        slug,
-        content
-      )
-    {:reply, {:ok, state}, state}
+    {:atomic, _} = :mnesia.transaction(fn ->
+      :mnesia.write(@table_name_in_db, {@table_name_in_db, slug, content}, :write)
+    end)
+    {:reply, :ok, state}
   end
 
   def handle_call({:rm, slug}, _from, state) do
-    state = state
-      |> Map.delete(slug)
-    {:reply, {:ok, state}, state}
+    {:atomic, _} = :mnesia.transaction(fn ->
+      :mnesia.delete(@table_name_in_db, slug, :write)
+    end)
+    {:reply, :ok, state}
+  end
+
+  defp db_result(slug) do
+    @table_name_in_db |> :mnesia.dirty_read(slug) |> List.first
+  end
+
+  defp db_to_val(nil) do
+    nil
+  end
+
+  defp db_to_val({@table_name_in_db, _slug, content}) do
+    content
   end
 
 end

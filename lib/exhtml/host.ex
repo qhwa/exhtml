@@ -7,10 +7,10 @@ defmodule Exhtml.Host do
   use GenServer
 
   @doc """
-  Starts a host with a name.
+  Starts a host.
   """
-  def start(opts \\ []) do
-    GenServer.start_link(__MODULE__, opts)
+  def start_link(opts \\ []) do
+    GenServer.start_link(__MODULE__, opts, name: opts[:name])
   end
 
   @doc """
@@ -37,8 +37,24 @@ defmodule Exhtml.Host do
   end
 
 
-  ## Callbacks
+  @doc """
+  Deletes the content from a host.
+  """
+  def delete_content(pid, slug) do
+    GenServer.call(pid, {:delete_content, slug})
+  end
 
+
+  @doc """
+  Sets the content fetcher. A fetcher is used to fetch
+  content from the data source, such as a remote server.
+  """
+  def set_content_fetcher(pid, f) do
+    GenServer.call(pid, {:set_content_fetcher, f})
+  end
+
+
+  ## Callbacks
 
   def init(opts) do
     {table, storage} = start_host_with_opts(opts)
@@ -65,16 +81,32 @@ defmodule Exhtml.Host do
   def handle_call({:update_content, slug}, _from, state) do
     {table_pid, storage_pid} = state
     content = Exhtml.Storage.fetch(storage_pid, slug)
-    {:ok, _} = Exhtml.Table.set(table_pid, slug, content)
+    :ok = Exhtml.Table.set(table_pid, slug, content)
 
     {:reply, content, state}
+  end
+
+
+  def handle_call({:delete_content, slug}, _from, state) do
+    state
+      |> elem(0)
+      |> Exhtml.Table.rm(slug)
+      |> to_reply(state)
+  end
+
+
+  def handle_call({:set_content_fetcher, f}, _from, state) do
+    state
+      |> elem(1)
+      |> Exhtml.Storage.set_fetcher(f)
+      |> to_reply(state)
   end
 
 
   defp start_host_with_opts(opts) do
     {:ok, table_pid}   = Exhtml.Table.start_link
     {:ok, storage_pid} = Exhtml.Storage.start_link(
-      engine: opts[:storage_engine] || Exhtml.Storage.DefaultStorage
+      fetcher: opts[:content_fetcher] || Exhtml.Storage.DefaultStorage,
     )
 
     {table_pid, storage_pid}
@@ -110,7 +142,5 @@ defmodule Exhtml.Host do
   defp set_content_to_table(pid, slug, content) do
     Exhtml.Table.set(pid, slug, content)
   end
-
-
 
 end
