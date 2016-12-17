@@ -29,20 +29,19 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
     end
     ```
 
-## Setup
+  3. (optional) Add configuration into your project:
 
-TODO: allow custom configuration
+    ```elixir
+    use Mix.config
+
+    # `content_fetcher` can either be a module or a function.
+    # `MyContentFetcher.fetch` accepts a key and returns content for the key.
+    config :exhtml, content_fetcher: &MyContentFetcher.fetch/1
+    ```
 
 ## Usage
 
 ```elixir
-# set content fetcher
-Exhtml.set_content_fetcher fn slug ->
-  # fetch content by slug from remote
-  # ...
-  "#{slug} content on remote"
-end
-
 # update content.
 # Notice: contents live in memory and automaticly persisted in disk.
 Exhtml.update_content :my_page
