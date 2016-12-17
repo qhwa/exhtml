@@ -11,4 +11,9 @@ defmodule Exhtml.StorageTest do
   test "fetch content from storage", %{pid: pid} do
     assert Exhtml.Storage.fetch(pid, "foo") == "FOO"
   end
+
+  test "set content fetcher", %{pid: pid} do
+    assert Exhtml.Storage.set_fetcher(pid, fn slug -> :intersting end)
+    assert Exhtml.Storage.fetch(pid, :anything) == :intersting
+  end
 end

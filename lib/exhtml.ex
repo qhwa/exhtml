@@ -8,6 +8,13 @@ defmodule Exhtml do
   """
 
   @doc """
+  Sets the content fetcher.
+  """
+  def set_content_fetcher(f) do
+    Exhtml.Host.set_content_fetcher(:exhtml_host, f)
+  end
+
+  @doc """
   Gets html content from a host.
   """
   def get_content(slug) do

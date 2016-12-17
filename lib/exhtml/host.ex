@@ -45,6 +45,15 @@ defmodule Exhtml.Host do
   end
 
 
+  @doc """
+  Sets the content fetcher. A fetcher is used to fetch
+  content from the data source, such as a remote server.
+  """
+  def set_content_fetcher(pid, f) do
+    GenServer.call(pid, {:set_content_fetcher, f})
+  end
+
+
   ## Callbacks
 
   def init(opts) do
@@ -82,6 +91,14 @@ defmodule Exhtml.Host do
     state
       |> elem(0)
       |> Exhtml.Table.rm(slug)
+      |> to_reply(state)
+  end
+
+
+  def handle_call({:set_content_fetcher, f}, _from, state) do
+    state
+      |> elem(1)
+      |> Exhtml.Storage.set_fetcher(f)
       |> to_reply(state)
   end
 
