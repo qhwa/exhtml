@@ -1,5 +1,7 @@
 # Exhtml
 
+> This project is under active developement and is unreliable at this moment. DO NOT use it in your production.
+
 Exhtml is a library that handles HTML page serving.
 There are some benifts to have a dynamic HTML page host rather than static server:
 
@@ -49,3 +51,5 @@ Exhtml.update_content :my_page
 Exhtml.get_content :my_page
 #=> "my_page content on remote"
 ```
+
+
