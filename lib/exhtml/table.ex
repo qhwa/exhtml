@@ -10,8 +10,8 @@ defmodule Exhtml.Table do
 
   # APIs
 
-  def start_link(_opts \\ []) do
-    GenServer.start_link(__MODULE__, [])
+  def start_link(opts \\ []) do
+    GenServer.start_link(__MODULE__, opts)
   end
 
   def get(ns, slug) do
@@ -29,12 +29,14 @@ defmodule Exhtml.Table do
 
   # Callbacks
 
-  def init(_opts) do
-    start_db
+  def init(opts) do
+    start_db(opts[:data_dir] || "./exhtml_contents")
     {:ok, %{}}
   end
 
-  defp start_db do
+  defp start_db(data_dir) do
+    :mnesia |> :application.load
+    :mnesia |> :application.set_env(:dir, to_charlist(data_dir))
     :mnesia.create_schema([node])
     :mnesia.start
     :mnesia.create_table @table_name_in_db, attributes: [:slug, :content], disc_copies: [node]

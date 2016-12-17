@@ -19,7 +19,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
     ```elixir
     def deps do
-      [{:exhtml, "~> 0.1.0-beta.1"}]
+      [{:exhtml, github: "qhwa/exhtml"}]
     end
     ```
 
@@ -34,11 +34,22 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   3. (optional) Add configuration into your project:
 
     ```elixir
-    use Mix.config
+    use Mix.Config
 
     # `content_fetcher` can either be a module or a function.
     # `MyContentFetcher.fetch` accepts a key and returns content for the key.
-    config :exhtml, content_fetcher: &MyContentFetcher.fetch/1
+    config :exhtml,
+
+      # use a function in named module as a fetcher:
+      # content_fetcher: &MyContentFetcher.fetch/1,
+
+      # or use an anonymous function:
+      # content_fetcher: fn slug -> "#{slug} content on remote" end,
+      # where exhtml is going to save contents
+      content_fetcher: nil,
+
+      # where to store contents on disk:
+      data_dir: "/home/data/exhtml_contents"
     ```
 
 ## Usage

@@ -28,10 +28,9 @@ defmodule Exhtml.Supervisor do
 
     {:ok, _} = Supervisor.start_child(
       sup,
-      worker(Exhtml.Host, [[
-        name: :exhtml_host,
-        content_fetcher: opts[:content_fetcher]
-      ]])
+      worker(Exhtml.Host, [
+        Keyword.put(opts, :name, :exhtml_host)
+      ])
     )
 
     {:ok, sup}
