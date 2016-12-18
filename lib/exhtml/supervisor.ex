@@ -14,11 +14,10 @@ defmodule Exhtml.Supervisor do
 
   defp start_workers(sup, opts) do
     registry_state = %{ping: :pong}
-    table_state    = %{ping: :pong}
 
     {:ok, _} = Supervisor.start_child(
       sup,
-      worker(Exhtml.Stash, [registry_state, table_state])
+      worker(Exhtml.Stash, [registry_state])
     )
 
     {:ok, _} = Supervisor.start_child(
