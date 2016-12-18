@@ -1,6 +1,7 @@
 # Exhtml
 
 ![travis-status](https://travis-ci.org/qhwa/exhtml.svg?branch=master)
+[![Inline docs](http://inch-ci.org/github/qhwa/exhtml.svg)](http://inch-ci.org/github/qhwa/exhtml)
 
 > This project is under active developement and is unreliable at this moment. DO NOT use it in your production.
 
@@ -62,4 +63,11 @@ Exhtml.get_content :my_page
 #=> "my_page content on remote"
 ```
 
+## License
 
+MIT liccense
+
+## Contributions
+
+* [Pull requests](https://github.com/qhwa/exhtml/pulls) are welcome.
+* [Issues here](https://github.com/qhwa/exhtml/issues)
