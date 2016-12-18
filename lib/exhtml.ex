@@ -9,18 +9,20 @@ defmodule Exhtml do
   from state.
   """
 
+  @name {:global, :exhtml_host}
+
   @doc """
   Sets the content fetcher.
   """
   def set_content_fetcher(f) do
-    Exhtml.Host.set_content_fetcher(:exhtml_host, f)
+    Exhtml.Host.set_content_fetcher(@name, f)
   end
 
   @doc """
   Gets html content from a host.
   """
   def get_content(slug) do
-    Exhtml.Host.get_content(:exhtml_host, slug)
+    Exhtml.Host.get_content(@name, slug)
   end
 
 
@@ -28,7 +30,7 @@ defmodule Exhtml do
   Sets html content to a host with a slug.
   """
   def set_content(slug, value) do
-    Exhtml.Host.set_content(:exhtml_host, slug, value)
+    Exhtml.Host.set_content(@name, slug, value)
   end
 
 
@@ -36,7 +38,7 @@ defmodule Exhtml do
   Fetchs and sets the content from the storage to a host's table.
   """
   def update_content(slug) do
-    Exhtml.Host.update_content(:exhtml_host, slug)
+    Exhtml.Host.update_content(@name, slug)
   end
 
 
@@ -44,7 +46,7 @@ defmodule Exhtml do
   Deletes the content from a host.
   """
   def delete_content(slug) do
-    Exhtml.Host.delete_content(:exhtml_host, slug)
+    Exhtml.Host.delete_content(@name, slug)
   end
 
 end

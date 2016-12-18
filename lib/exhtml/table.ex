@@ -7,6 +7,7 @@ defmodule Exhtml.Table do
   @table_name_in_db :exhtml_contents
 
   use GenServer
+  import Logger
 
   # APIs
 
@@ -30,17 +31,35 @@ defmodule Exhtml.Table do
   # Callbacks
 
   def init(opts) do
-    start_db(opts[:data_dir] || "./exhtml_contents")
+    start_db(
+      opts[:data_dir] || "./exhtml_contents",
+      opts[:data_nodes] || [Node.self]
+    )
     {:ok, %{}}
   end
 
-  defp start_db(data_dir) do
+  defp start_db(data_dir, nodes) do
+    path = Path.join([data_dir, to_string(node)])
+    File.mkdir_p path
+
     :mnesia |> :application.load
-    :mnesia |> :application.set_env(:dir, to_charlist(data_dir))
-    :mnesia.create_schema([node])
+    :mnesia |> :application.set_env(:dir, to_charlist(path))
+
+    :mnesia.create_schema(nodes)
     :mnesia.start
-    :mnesia.create_table @table_name_in_db, attributes: [:slug, :content], disc_copies: [node]
-    :mnesia.wait_for_tables [@table_name_in_db], 5000
+    :mnesia.create_table @table_name_in_db, attributes: [:slug, :content], disc_copies: nodes
+
+    ret = :mnesia.wait_for_tables [@table_name_in_db], 5000
+
+    case ret do
+      {:timeout, _} ->
+        error "Error starting exhtml databse, timeout."
+      {:error, reason} ->
+        error "Error starting exhtml databse, #{inspect reason}."
+      _ ->
+        nil
+    end
+    ret
   end
 
   def handle_call({:get, slug}, _from, state) do
