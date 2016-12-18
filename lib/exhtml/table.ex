@@ -26,11 +26,10 @@ defmodule Exhtml.Table do
   @doc """
   Starts a Exhtml.Table process.
 
-  options:
-
-  * `data_dir` indicates which path the data will be persited in.
-  * `data_nodes` indicates which nodes will hold persisted data. Other nodes
-      will only hold data in memories.
+  * `opts` - options for starting the process:
+      * `data_dir` indicates which path the data will be persited in.
+      * `data_nodes` indicates which nodes will hold persisted data. Other nodes
+          will only hold data in memories.
 
   Returns `{:ok, pid}` if succeed, `{:error, reason}` otherwise.
   """
