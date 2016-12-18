@@ -20,6 +20,9 @@ defmodule Exhtml.Registry do
 
   @doc """
   Starts a registry process.
+
+  * `opts` - options for starting registry process.
+      * `name` - set the process name
   """
   @spec start_link([key: any]) :: {:ok, pid} | {:error, any}
   def start_link(opts \\ []) do
@@ -30,8 +33,8 @@ defmodule Exhtml.Registry do
   @doc """
   Registers a pid to name.
 
-  * `key` the name of the PID.
-  * `value` the PID.
+  * `key` - the name of the PID.
+  * `value` - the PID.
   """
   def register(key, value) do
     GenServer.call(@name, {:register, key, value})
@@ -40,6 +43,8 @@ defmodule Exhtml.Registry do
 
   @doc """
   Maps a name to PID.
+
+  * `key` - the process name
 
   Returns ths PID associated with the key, otherwise `nil`.
   """

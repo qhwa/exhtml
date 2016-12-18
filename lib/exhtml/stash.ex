@@ -20,6 +20,9 @@ defmodule Exhtml.Stash do
 
   @doc """
   Saves the registry state.
+
+  * `server` - the PID or name of the server process
+  * `state` - the whole registry state
   """
   @spec save_registry(server, any) :: :ok
   def save_registry(server \\ @name, state) do
@@ -29,6 +32,8 @@ defmodule Exhtml.Stash do
 
   @doc """
   Gets current stashed registry state.
+
+  * `server` - the PID or name of the server process
   """
   def registry_state(server \\ @name) do
     GenServer.call(server, :get_registry_state)

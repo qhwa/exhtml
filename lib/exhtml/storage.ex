@@ -38,6 +38,9 @@ defmodule Exhtml.Storage do
   @doc """
   Fetches the content of a slug.
 
+  * `pid` - the PID or name of the server process
+  * `slug` - the key for the content
+
   Returns `nil` or the content stored.
 
   ## Examples:
@@ -56,6 +59,9 @@ defmodule Exhtml.Storage do
   @doc """
   Dynamicly set content fetcher. A fetcher can be a function, or a module that can repsond to &fetch/1.
   If you want to 'unset' fetcher, just pass `nil` as fetcher.
+
+  * `pid` - the PID or name of the server process
+  * `f` - function or module to fetch the content by a slug
 
   Returns `:ok`.
 
