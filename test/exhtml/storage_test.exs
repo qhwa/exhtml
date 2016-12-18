@@ -16,4 +16,5 @@ defmodule Exhtml.StorageTest do
     assert Exhtml.Storage.set_fetcher(pid, fn _slug -> :intersting end)
     assert Exhtml.Storage.fetch(pid, :anything) == :intersting
   end
+
 end

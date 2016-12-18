@@ -2,6 +2,8 @@ defmodule Exhtml do
 
   use Application
 
+  @type slug :: binary | atom
+
   @moduledoc """
   Exhtml serves HTML contents.
   It fetches content from backend storage and saves in
