@@ -63,6 +63,8 @@ Exhtml.get_content :my_page
 #=> "my_page content on remote"
 ```
 
+[Online API](https://hexdocs.pm/exhtml/Exhtml.html)
+
 ## License
 
 MIT liccense
