@@ -42,7 +42,8 @@ defmodule Exhtml.Mixfile do
     [
       {:upyun, github: "qhwa/elixir-upyun", branch: "v0.2-dev", only: [:test, :dev]},
       {:credo, "~> 0.4", only: [:dev]},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:inch_ex, only: :docs}
     ]
   end
 
