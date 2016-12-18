@@ -1,7 +1,19 @@
 defmodule Exhtml.Table do
+
+  @type slug :: Exhtml.slug
+  @type server :: GenServer.server
   
   @moduledoc """
-  Exhtml.Table is a group of HTML contents.
+  Exhtml.Table provides a place to set and get HTML contents by slug.
+
+  ## Examples:
+  
+      iex> {:ok, pid} = Exhtml.Table.start_link []
+      ...> Exhtml.Table.set(pid, :foo, :bar)
+      :ok
+      ...> Exhtml.Table.get(pid, :foo)
+      :bar
+
   """
 
   @table_name_in_db :exhtml_contents
@@ -11,25 +23,62 @@ defmodule Exhtml.Table do
 
   # APIs
 
-  def start_link(opts \\ []) do
+  @doc """
+  Starts a Exhtml.Table process.
+
+  options:
+
+  * `data_dir` indicates which path the data will be persited in.
+  * `data_nodes` indicates which nodes will hold persisted data. Other nodes
+      will only hold data in memories.
+
+  Returns `{:ok, pid}` if succeed, `{:error, reason}` otherwise.
+  """
+  @spec start_link([key: any]) :: {:ok, pid} | {:error, any}
+  def start_link(opts) do
     GenServer.start_link(__MODULE__, opts)
   end
 
-  def get(ns, slug) do
-    GenServer.call(ns, {:get, slug})
+
+  @doc """
+  Gets content of the slug from the store.
+  """
+  @spec get(server, slug) :: any
+  def get(server, slug) do
+    GenServer.call(server, {:get, slug})
   end
 
-  def set(ns, slug, content) do
-    GenServer.call(ns, {:set, slug, content})
+
+  @doc """
+  Sets content of the slug into the store.
+
+  ## Examples:
+  
+      iex> {:ok, pid} = Exhtml.Table.start_link []
+      ...> Exhtml.Table.set(pid, :foo, :bar)
+      :ok
+      iex> Exhtml.Table.get(pid, :foo)
+      :bar
+      
+  """
+  @spec set(server, slug, any) :: :ok
+  def set(server, slug, content) do
+    GenServer.call(server, {:set, slug, content})
   end
 
-  def rm(ns, slug) do
-    GenServer.call(ns, {:rm, slug})
+
+  @doc """
+  Removes content of the slug from the store.
+  """
+  @spec rm(server, slug) :: :ok
+  def rm(server, slug) do
+    GenServer.call(server, {:rm, slug})
   end
 
 
   # Callbacks
 
+  @doc false
   def init(opts) do
     start_db(
       opts[:data_dir] || "./exhtml_contents",
@@ -88,12 +137,7 @@ defmodule Exhtml.Table do
     @table_name_in_db |> :mnesia.dirty_read(slug) |> List.first
   end
 
-  defp db_to_val(nil) do
-    nil
-  end
-
-  defp db_to_val({@table_name_in_db, _slug, content}) do
-    content
-  end
+  defp db_to_val(nil), do: nil
+  defp db_to_val({@table_name_in_db, _slug, content}), do: content
 
 end
