@@ -1,13 +1,22 @@
 defmodule Exhtml.Mixfile do
   use Mix.Project
 
+  @description """
+  An HTML page server used for quickly update contents.
+  """
+
   def project do
-    [app: :exhtml,
-     version: "0.1.0-beta.1",
-     elixir: "~> 1.3",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps()]
+    [
+      app: :exhtml,
+      version: "0.1.0-beta.1",
+      elixir: "~> 1.3",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      deps: deps(),
+      name: "exhtml",
+      description: @description,
+      package: package()
+   ]
   end
 
   # Configuration for the OTP application
@@ -32,7 +41,16 @@ defmodule Exhtml.Mixfile do
   defp deps do
     [
       {:upyun, github: "qhwa/elixir-upyun", branch: "v0.2-dev", only: [:test, :dev]},
-      {:credo, "~> 0.4", only: [:dev]}
+      {:credo, "~> 0.4", only: [:dev]},
+      {:ex_doc, ">= 0.0.0", only: :dev}
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["qhwa"],
+      licenses: ["MIT"],
+      links: %{"Github" => "https://github.com/qhwa/exhtml"}
     ]
   end
 end

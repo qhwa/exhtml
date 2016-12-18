@@ -62,4 +62,11 @@ Exhtml.get_content :my_page
 #=> "my_page content on remote"
 ```
 
+## License
 
+MIT liccense
+
+## Contributions
+
+* [Pull requests](https://github.com/qhwa/exhtml/pulls) are welcome.
+* [Issues here](https://github.com/qhwa/exhtml/issues)
