@@ -20,7 +20,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
     ```elixir
     def deps do
-      [{:exhtml, github: "qhwa/exhtml"}]
+      [{:exhtml, "~> 0.1.0"}]
     end
     ```
 
