@@ -13,7 +13,14 @@ defmodule Exhtml.StorageTest do
   end
 
   test "set content fetcher", %{pid: pid} do
-    assert Exhtml.Storage.set_fetcher(pid, fn slug -> :intersting end)
+    assert Exhtml.Storage.set_fetcher(pid, fn _slug -> :intersting end) == :ok
     assert Exhtml.Storage.fetch(pid, :anything) == :intersting
   end
+
+  test "unset fetcher" do
+    {:ok, pid} = Exhtml.Storage.start_link fetcher: fn _ -> :good end
+    assert Exhtml.Storage.set_fetcher(pid, nil) == :ok
+    assert Exhtml.Storage.fetch(pid, :hi) == nil
+  end
+
 end

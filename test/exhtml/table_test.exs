@@ -5,7 +5,7 @@ defmodule Exhtml.TableTest do
 
   setup do
     Exhtml.Stash.start_link(%{}, %{})
-    {:ok, pid} = Exhtml.Table.start_link
+    {:ok, pid} = Exhtml.Table.start_link []
     Exhtml.Table.rm(pid, "foo")
     {:ok, %{pid: pid}}
   end

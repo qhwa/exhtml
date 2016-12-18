@@ -12,4 +12,7 @@ config :exhtml,
   content_fetcher: nil,
 
   # where to store contents on disk:
-  data_dir: "./exhtml_contents"
+  data_dir: "./exhtml_contents",
+
+  # on which node exhtml's database will run
+  data_nodes: [node]
