@@ -23,12 +23,7 @@ defmodule Exhtml do
   @name {:global, :exhtml_host}
 
 
-  @doc """
-  Starts exhtml application.
-  You don't need to call this manualy if already
-  put `:exhtml` in your `application` of `Mix.exs`.
-  """
-  @spec start([key: any]) :: {:ok, pid} | {:error, any}
+  @doc false
   def start(opts) do
     opts
     |> Keyword.put(:name, @name)
