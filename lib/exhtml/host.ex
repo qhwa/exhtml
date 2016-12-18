@@ -4,10 +4,19 @@ defmodule Exhtml.Host do
   Exhtml.Host represents the content server.
   """
 
+  @type server :: GenServer.server
+  @type slug :: Exhtml.slug
+
   use GenServer
 
   @doc """
   Starts a host.
+
+  * `opts` - options for starting the process
+      * `name` - the process name
+      * `content_fetcher` - the content fetcher for `Exhtml.Storage`
+      * `data_dir` - the database storage dir for `Exhtml.Table`
+      * `data_nodes` - the database nodes for `Exhtml.Table`
   """
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: opts[:name])
@@ -15,42 +24,67 @@ defmodule Exhtml.Host do
 
   @doc """
   Gets html content from a host.
+
+  * `server` - the PID or name of the process
+  * `slug` - the key of the content
   """
-  def get_content(pid, slug) do
-    GenServer.call(pid, {:get_content, slug})
+  @spec get_content(server, slug) :: any
+  def get_content(server, slug) do
+    GenServer.call(server, {:get_content, slug})
   end
 
 
   @doc """
   Sets html content to a host with a slug.
+
+  * `server` - the PID or name of the process
+  * `slug` - the key of the content
+  * `value` - the content to save
+
+  Returns `:ok`.
   """
-  def set_content(pid, slug, value) do
-    GenServer.call(pid, {:set_content, slug, value})
+  @spec set_content(server, slug, any) :: :ok
+  def set_content(server, slug, value) do
+    GenServer.call(server, {:set_content, slug, value})
   end
 
 
   @doc """
   Fetchs and sets the content from the storage to a host's table.
+
+  * `server` - the PID or name of the process
+  * `slug` - the key of the content
+
+  Returns content fetched.
   """
-  def update_content(pid, slug) do
-    GenServer.call(pid, {:update_content, slug})
+  @spec update_content(server, slug) :: any
+  def update_content(server, slug) do
+    GenServer.call(server, {:update_content, slug})
   end
 
 
   @doc """
   Deletes the content from a host.
+
+  * `server` - the PID or name of the process
+  * `slug` - the key of the content
   """
-  def delete_content(pid, slug) do
-    GenServer.call(pid, {:delete_content, slug})
+  @spec delete_content(server, slug) :: :ok
+  def delete_content(server, slug) do
+    GenServer.call(server, {:delete_content, slug})
   end
 
 
   @doc """
   Sets the content fetcher. A fetcher is used to fetch
   content from the data source, such as a remote server.
+
+  * `server` - the PID or name of the process
+  * `f` - function or module to fetch content
   """
-  def set_content_fetcher(pid, f) do
-    GenServer.call(pid, {:set_content_fetcher, f})
+  @spec set_content_fetcher(server, (slug -> any) | module) :: :ok
+  def set_content_fetcher(server, f) do
+    GenServer.call(server, {:set_content_fetcher, f})
   end
 
 
@@ -124,8 +158,8 @@ defmodule Exhtml.Host do
   end
 
 
-  defp get_content_from_table(pid, slug) do
-    Exhtml.Table.get(pid, slug)
+  defp get_content_from_table(server, slug) do
+    Exhtml.Table.get(server, slug)
   end
 
 
@@ -139,8 +173,8 @@ defmodule Exhtml.Host do
   end
 
 
-  defp set_content_to_table(pid, slug, content) do
-    Exhtml.Table.set(pid, slug, content)
+  defp set_content_to_table(server, slug, content) do
+    Exhtml.Table.set(server, slug, content)
   end
 
 end
