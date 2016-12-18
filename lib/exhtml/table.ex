@@ -42,6 +42,9 @@ defmodule Exhtml.Table do
 
   @doc """
   Gets content of the slug from the store.
+
+  * `server` - PID or name of the server
+  * `slug` - key of the content
   """
   @spec get(server, slug) :: any
   def get(server, slug) do
@@ -51,6 +54,10 @@ defmodule Exhtml.Table do
 
   @doc """
   Sets content of the slug into the store.
+
+  * `server` - PID or name of the server
+  * `slug` - key of the content
+  * `content` - the content for the slug
 
   ## Examples:
   
@@ -69,6 +76,9 @@ defmodule Exhtml.Table do
 
   @doc """
   Removes content of the slug from the store.
+
+  * `server` - PID or name of the server
+  * `slug` - key of the content
   """
   @spec rm(server, slug) :: :ok
   def rm(server, slug) do

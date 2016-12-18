@@ -62,6 +62,8 @@ defmodule Exhtml do
   @doc """
   Gets html content from a host.
 
+  * `slug` is the key of content to get.
+
   ## Examples:
 
       iex> Exhtml.start []
@@ -78,6 +80,9 @@ defmodule Exhtml do
 
   @doc """
   Sets html content to a host with a slug.
+
+  * `slug` is the key of content.
+  * `value` is the content.
 
   Returns `:ok`.
 
@@ -98,6 +103,8 @@ defmodule Exhtml do
   @doc """
   Fetchs and sets the content from the storage to a host's table.
 
+  * `slug` is the key of content.
+
   Returns anything returned by the fetcher.
 
   ## Examples:
@@ -115,6 +122,8 @@ defmodule Exhtml do
 
   @doc """
   Deletes the content from a host.
+
+  * `slug` is the key of content.
 
   Returns `:ok`.
 

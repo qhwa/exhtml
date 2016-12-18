@@ -6,6 +6,7 @@ defmodule Exhtml.Supervisor do
   
   use Supervisor
 
+  @doc false
   def start_link(arg \\ []) do
     {:ok, sup} = Supervisor.start_link(__MODULE__, arg)
     start_workers(sup, arg)
