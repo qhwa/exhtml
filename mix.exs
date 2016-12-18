@@ -40,10 +40,9 @@ defmodule Exhtml.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:upyun, github: "qhwa/elixir-upyun", branch: "v0.2-dev", only: [:test, :dev]},
       {:credo, "~> 0.4", only: [:dev]},
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:inch_ex, only: :docs}
+      {:inch_ex, ">= 0.0.0", only: :docs}
     ]
   end
 
