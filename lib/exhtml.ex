@@ -110,6 +110,7 @@ defmodule Exhtml do
       "Hi, wuliu!"
 
   """
+  @spec update_content(slug) :: any
   def update_content(slug) do
     Exhtml.Host.update_content(@name, slug)
   end
@@ -134,6 +135,7 @@ defmodule Exhtml do
       nil
 
   """
+  @spec delete_content(slug) :: :ok
   def delete_content(slug) do
     Exhtml.Host.delete_content(@name, slug)
   end
