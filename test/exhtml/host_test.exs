@@ -65,7 +65,7 @@ defmodule ExhtmlTest.HostTest do
 
   test "should not update content when fetche content is invalid" do
     {:ok, pid} = Host.start_link([content_fetcher: fn _ -> {:error, :invalid} end])
-    assert Host.update_content(pid, :foo) == {:error, :invalid}
-    assert Host.get_content(pid, :foo) == nil
+    assert Host.update_content(pid, :foo_err_update) == {:error, :invalid}
+    assert Host.get_content(pid, :foo_err_update) == nil
   end
 end
