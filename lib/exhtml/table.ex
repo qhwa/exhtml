@@ -97,7 +97,7 @@ defmodule Exhtml.Table do
   end
 
   defp start_db(data_dir, nodes) do
-    path = Path.join([data_dir, to_string(node)])
+    path = Path.join([data_dir, to_string(node())])
     File.mkdir_p path
 
     :mnesia |> :application.load
