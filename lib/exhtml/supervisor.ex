@@ -23,11 +23,6 @@ defmodule Exhtml.Supervisor do
 
     Supervisor.start_child(
       sup,
-      worker(Exhtml.Registry, [])
-    )
-
-    Supervisor.start_child(
-      sup,
       worker(Exhtml.Host, [
         Keyword.put(opts, :name, {:global, :exhtml_host})
       ])
