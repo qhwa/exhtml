@@ -25,6 +25,7 @@ defmodule Exhtml.Mixfile do
   def application do
     [
       applications: [:logger],
+      included_applications: [:mnesia],
       mod: {Exhtml.App, []}
     ]
   end
