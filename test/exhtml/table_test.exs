@@ -18,4 +18,8 @@ defmodule Exhtml.TableTest do
     :ok = Exhtml.Table.set(pid, "foo", "bar")
     assert Exhtml.Table.get(pid, "foo") == "bar"
   end
+
+  test "set data_dir" do
+    assert Application.get_env(:mnesia, :dir) == './exhtml_contents'
+  end
 end
