@@ -101,6 +101,7 @@ defmodule Exhtml.Table do
 
     :mnesia |> :application.load
     :mnesia |> :application.set_env(:dir, to_charlist(data_dir))
+    :mnesia |> :application.set_env(:auto_repair, true)
 
     :mnesia.create_schema(nodes)
     :mnesia.start
