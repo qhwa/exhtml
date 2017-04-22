@@ -55,4 +55,17 @@ defmodule ExhtmlTest.HostTest do
     Host.update_content(server, "aye")
     assert Host.get_content(server, "aye") == "aye"
   end
+
+
+  test "should not save content to table when fetched content is invalid", %{server: server} do
+    assert Host.set_content(server, :foo_err, {:error, :bar}) == {:error, :bar}
+    assert Host.get_content(server, :foo_err) == nil
+  end
+
+
+  test "should not update content when fetche content is invalid" do
+    {:ok, pid} = Host.start_link([content_fetcher: fn _ -> {:error, :invalid} end])
+    assert Host.update_content(pid, :foo_err_update) == {:error, :invalid}
+    assert Host.get_content(pid, :foo_err_update) == nil
+  end
 end

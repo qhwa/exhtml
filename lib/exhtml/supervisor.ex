@@ -21,10 +21,10 @@ defmodule Exhtml.Supervisor do
       worker(Exhtml.Stash, [registry_state])
     )
 
-    Supervisor.start_child(
+Supervisor.start_child(
       sup,
       worker(Exhtml.Host, [
-        Keyword.put(opts, :name, {:global, :exhtml_host})
+        Keyword.put(opts, :name, :exhtml_host)
       ])
     )
 

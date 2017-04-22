@@ -20,7 +20,7 @@ defmodule Exhtml do
 
   """
 
-  @name {:global, :exhtml_host}
+  @name :exhtml_host
 
 
   @doc false
