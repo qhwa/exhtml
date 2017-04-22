@@ -136,9 +136,11 @@ defmodule Exhtml.Host do
   def handle_call({:update_content, slug}, _from, state) do
     {table_pid, storage_pid} = state
     content = Exhtml.Storage.fetch(storage_pid, slug)
-    :ok = Exhtml.Table.set(table_pid, slug, content)
-
-    {:reply, content, state}
+    result = case set_content_to_table(table_pid, slug, content) do
+      :ok -> content
+      ret -> ret
+    end
+    {:reply, result, state}
   end
 
 
@@ -194,11 +196,8 @@ defmodule Exhtml.Host do
   end
 
 
-  defp set_content_to_table(nil, _, _) do
-    {:error, :not_running}
-  end
-
-
+  defp set_content_to_table(nil, _, _), do: {:error, :not_running}
+  defp set_content_to_table(server, _slug, content = {:error, _}), do: content
   defp set_content_to_table(server, slug, content) do
     Exhtml.Table.set(server, slug, content)
   end

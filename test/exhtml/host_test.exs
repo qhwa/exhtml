@@ -63,7 +63,20 @@ defmodule ExhtmlTest.HostTest do
     Host.update_content(server, "some-content")
 
     assert Host.get_content_since(server, "some-content", DateTime.utc_now) == :unchanged
-    assert Host.get_content_since(server, "some-content", nil) == "default_content_for_some-content"
-    assert Host.get_content_since(server, "some-content", yesterday()) == "default_content_for_some-content"
+    assert Host.get_content_since(server, "some-content", nil) == {:ok, "default_content_for_some-content"}
+    assert Host.get_content_since(server, "some-content", yesterday()) == {:ok, "default_content_for_some-content"}
+  end
+
+  test "should not save content to table when fetched content is invalid", %{server: server} do
+    assert Host.set_content(server, :foo_err, {:error, :bar}) == {:error, :bar}
+    assert Host.get_content(server, :foo_err) == nil
+    assert Host.get_content_since(server, :foo_err, nil) == nil
+  end
+
+
+  test "should not update content when fetche content is invalid" do
+    {:ok, pid} = Host.start_link([content_fetcher: fn _ -> {:error, :invalid} end])
+    assert Host.update_content(pid, :foo_err_update) == {:error, :invalid}
+    assert Host.get_content_since(pid, :foo_err_update, nil) == nil
   end
 end

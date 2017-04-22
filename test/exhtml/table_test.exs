@@ -32,9 +32,9 @@ defmodule Exhtml.TableTest do
   test ".get_content_since of existing key", %{pid: pid} do
     :ok = Exhtml.Table.set(pid, "foo", :bar)
 
-    assert Exhtml.Table.get_since(pid, "foo", nil) == :bar
+    assert Exhtml.Table.get_since(pid, "foo", nil) == {:ok, :bar}
     assert Exhtml.Table.get_since(pid, "foo", DateTime.utc_now) == :unchanged
-    assert Exhtml.Table.get_since(pid, "foo", yesterday()) == :bar
+    assert Exhtml.Table.get_since(pid, "foo", yesterday()) == {:ok, :bar}
   end
 
 end

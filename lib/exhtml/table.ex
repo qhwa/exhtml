@@ -147,9 +147,11 @@ defmodule Exhtml.Table do
       |> db_to_val_with_time
 
     ret = case val do
-      {content, nil} -> content
-      {content, t} -> to_content_since(content, t, since)
-      _ -> val
+      nil             -> nil
+      {nil, nil}      -> nil
+      {content, nil}  -> {:ok, content}
+      {content, t}    -> to_content_since(content, t, since)
+      _               -> {:ok, val}
     end
 
     {:reply, ret, state}
@@ -181,11 +183,11 @@ defmodule Exhtml.Table do
   defp db_to_val_with_time({@table_name_in_db, _slug, {content, mtime}}), do: {content, mtime}
   defp db_to_val_with_time({@table_name_in_db, _slug, content}), do: {content, nil}
 
-  defp to_content_since(content, _, nil), do: content
+  defp to_content_since(content, _, nil), do: {:ok, content}
   defp to_content_since(content, t, since) do
     case DateTime.compare(t, since) do
       :lt -> :unchanged
-      _ -> content
+      _ -> {:ok, content}
     end
   end
 
