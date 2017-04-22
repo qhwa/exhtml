@@ -97,11 +97,11 @@ defmodule Exhtml.Table do
   end
 
   defp start_db(data_dir, nodes) do
-    path = Path.join([data_dir, to_string(node)])
-    File.mkdir_p path
+    File.mkdir_p data_dir
 
     :mnesia |> :application.load
-    :mnesia |> :application.set_env(:dir, to_charlist(path))
+    :mnesia |> :application.set_env(:dir, to_charlist(data_dir))
+    :mnesia |> :application.set_env(:auto_repair, true)
 
     :mnesia.create_schema(nodes)
     :mnesia.start

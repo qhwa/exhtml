@@ -16,17 +16,12 @@ defmodule Exhtml.Supervisor do
   defp start_workers(sup, opts) do
     registry_state = %{ping: :pong}
 
-    {:ok, _} = Supervisor.start_child(
+    Supervisor.start_child(
       sup,
       worker(Exhtml.Stash, [registry_state])
     )
 
-    Supervisor.start_child(
-      sup,
-      worker(Exhtml.Registry, [])
-    )
-
-    Supervisor.start_child(
+Supervisor.start_child(
       sup,
       worker(Exhtml.Host, [
         Keyword.put(opts, :name, :exhtml_host)

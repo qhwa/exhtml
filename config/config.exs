@@ -15,4 +15,4 @@ config :exhtml,
   data_dir: "./exhtml_contents",
 
   # on which node exhtml's database will run
-  data_nodes: [node]
+  data_nodes: [node()]
