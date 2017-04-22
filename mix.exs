@@ -8,8 +8,8 @@ defmodule Exhtml.Mixfile do
   def project do
     [
       app: :exhtml,
-      version: "0.4.0",
-      elixir: ">= 1.4.0",
+      version: "0.3.1",
+      elixir: ">= 1.3.0",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps(),

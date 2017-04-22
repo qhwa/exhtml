@@ -1,6 +1,4 @@
 defmodule ExhtmlTest.HostTest do
-  import TestHelper
-
   use ExUnit.Case
   doctest Exhtml.Host
   alias Exhtml.Host
@@ -56,14 +54,5 @@ defmodule ExhtmlTest.HostTest do
     Host.set_content_fetcher(server, fn slug -> slug end)
     Host.update_content(server, "aye")
     assert Host.get_content(server, "aye") == "aye"
-  end
-
-
-  test ".get_content_since", %{server: server} do
-    Host.update_content(server, "some-content")
-
-    assert Host.get_content_since(server, "some-content", DateTime.utc_now) == :unchanged
-    assert Host.get_content_since(server, "some-content", nil) == "default_content_for_some-content"
-    assert Host.get_content_since(server, "some-content", yesterday()) == "default_content_for_some-content"
   end
 end
