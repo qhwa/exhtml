@@ -35,6 +35,19 @@ defmodule Exhtml.Host do
 
 
   @doc """
+  Gets html content from a host with cache time.
+
+  * `server` - the PID or name of the process
+  * `slug` - the key of the content
+  * `time` - the modified time to check.
+  """
+  @spec get_content_since(server, slug, DateTime.t) :: any
+  def get_content_since(server, slug, time) do
+    GenServer.call(server, {:get_content_since, slug, time})
+  end
+
+
+  @doc """
   Sets html content to a host with a slug.
 
   * `server` - the PID or name of the process
@@ -104,6 +117,14 @@ defmodule Exhtml.Host do
   end
 
 
+  def handle_call({:get_content_since, slug, time}, _from, state) do
+    state
+      |> to_table_pid
+      |> get_content_from_table(slug, time)
+      |> to_reply(state)
+  end
+
+
   def handle_call({:set_content, slug, value}, _from, state) do
     state
       |> to_table_pid
@@ -160,6 +181,11 @@ defmodule Exhtml.Host do
 
   defp get_content_from_table(server, slug) do
     Exhtml.Table.get(server, slug)
+  end
+
+
+  defp get_content_from_table(server, slug, since) do
+    Exhtml.Table.get_since(server, slug, since)
   end
 
 
