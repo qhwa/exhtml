@@ -71,6 +71,23 @@ defmodule Exhtml do
   def get_content(slug) do
     Exhtml.Host.get_content(@name, slug)
   end
+  
+
+  @doc """
+  Gets html content from a host.
+
+  * `slug` is the key of content to get.
+  * `time` is the modified time.
+
+  ## Returns:
+
+  `{:not_modified}` - If the content has not changed since the time;
+  content - if the content has changed since the time.
+  """
+  @spec get_content_since(slug, DateTime.t) :: any
+  def get_content_since(slug, time) do
+    Exhtml.Host.get_content_since(@name, slug, time)
+  end
 
 
   @doc """
