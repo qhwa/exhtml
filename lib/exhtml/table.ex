@@ -52,19 +52,6 @@ defmodule Exhtml.Table do
 
 
   @doc """
-  Gets content of the slug from the store since the time.
-
-  * `server` - PID or name of the server
-  * `slug` - key of the content
-  * `since` - modiefied time
-  """
-  @spec get_since(server, slug, DateTime.t) :: any
-  def get_since(server, slug, since) do
-    GenServer.call(server, {:get_since, slug, since})
-  end
-
-
-  @doc """
   Sets content of the slug into the store.
 
   * `server` - PID or name of the server
@@ -141,23 +128,9 @@ defmodule Exhtml.Table do
     {:reply, ret, state}
   end
 
-  def handle_call({:get_since, slug, since}, _from, state) do
-    val = slug
-      |> db_result
-      |> db_to_val_with_time
-
-    ret = case val do
-      {content, nil} -> content
-      {content, t} -> to_content_since(content, t, since)
-      _ -> val
-    end
-
-    {:reply, ret, state}
-  end
-
   def handle_call({:set, slug, content}, _from, state) do
     {:atomic, _} = :mnesia.transaction(fn ->
-      :mnesia.write(@table_name_in_db, {@table_name_in_db, slug, {content, DateTime.utc_now}}, :write)
+      :mnesia.write(@table_name_in_db, {@table_name_in_db, slug, content}, :write)
     end)
     {:reply, :ok, state}
   end
@@ -174,19 +147,6 @@ defmodule Exhtml.Table do
   end
 
   defp db_to_val(nil), do: nil
-  defp db_to_val({@table_name_in_db, _slug, {content, _t}}), do: content
   defp db_to_val({@table_name_in_db, _slug, content}), do: content
-
-  defp db_to_val_with_time(nil), do: nil
-  defp db_to_val_with_time({@table_name_in_db, _slug, {content, mtime}}), do: {content, mtime}
-  defp db_to_val_with_time({@table_name_in_db, _slug, content}), do: {content, nil}
-
-  defp to_content_since(content, _, nil), do: content
-  defp to_content_since(content, t, since) do
-    case DateTime.compare(t, since) do
-      :lt -> :unchanged
-      _ -> content
-    end
-  end
 
 end
