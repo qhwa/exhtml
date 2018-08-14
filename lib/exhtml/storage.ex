@@ -33,6 +33,11 @@ defmodule Exhtml.Storage do
     GenServer.start_link(__MODULE__, opts)
   end
 
+  @doc false
+  def init(args) do
+    {:ok, args}
+  end
+
   @doc """
   Fetches the content of a slug.
 
