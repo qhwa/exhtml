@@ -1,13 +1,12 @@
 defmodule Exhtml.Table do
+  @type slug :: Exhtml.slug()
+  @type server :: GenServer.server()
 
-  @type slug :: Exhtml.slug
-  @type server :: GenServer.server
-  
   @moduledoc """
   Exhtml.Table provides a place to set and get HTML contents by slug.
 
   ## Examples:
-  
+
       iex> {:ok, pid} = Exhtml.Table.start_link []
       ...> Exhtml.Table.set(pid, :foo, :bar)
       :ok
@@ -33,11 +32,10 @@ defmodule Exhtml.Table do
 
   Returns `{:ok, pid}` if succeed, `{:error, reason}` otherwise.
   """
-  @spec start_link([key: any]) :: {:ok, pid} | {:error, any}
+  @spec start_link(key: any) :: {:ok, pid} | {:error, any}
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts)
   end
-
 
   @doc """
   Gets content of the slug from the store.
@@ -50,7 +48,6 @@ defmodule Exhtml.Table do
     GenServer.call(server, {:get, slug})
   end
 
-
   @doc """
   Gets content of the slug from the store since the time.
 
@@ -58,11 +55,10 @@ defmodule Exhtml.Table do
   * `slug` - key of the content
   * `since` - modiefied time
   """
-  @spec get_since(server, slug, DateTime.t) :: any
+  @spec get_since(server, slug, DateTime.t()) :: any
   def get_since(server, slug, since) do
     GenServer.call(server, {:get_since, slug, since})
   end
-
 
   @doc """
   Sets content of the slug into the store.
@@ -72,7 +68,7 @@ defmodule Exhtml.Table do
   * `content` - the content for the slug
 
   ## Examples:
-  
+
       iex> {:ok, pid} = Exhtml.Table.start_link []
       ...> Exhtml.Table.set(pid, :foo, :bar)
       :ok
@@ -85,7 +81,6 @@ defmodule Exhtml.Table do
     GenServer.call(server, {:set, slug, content})
   end
 
-
   @doc """
   Removes content of the slug from the store.
 
@@ -97,44 +92,48 @@ defmodule Exhtml.Table do
     GenServer.call(server, {:rm, slug})
   end
 
-
   # Callbacks
 
   @doc false
   def init(opts) do
     start_db(
       opts[:data_dir] || "./exhtml_contents",
-      opts[:data_nodes] || [Node.self]
+      opts[:data_nodes] || [Node.self()]
     )
+
     {:ok, %{}}
   end
 
   defp start_db(data_dir, nodes) do
-    File.mkdir_p data_dir
+    File.mkdir_p(data_dir)
 
-    :mnesia |> :application.load
+    :mnesia |> :application.load()
     :mnesia |> :application.set_env(:dir, to_charlist(data_dir))
     :mnesia |> :application.set_env(:auto_repair, true)
 
     :mnesia.create_schema(nodes)
-    :mnesia.start
-    :mnesia.create_table @table_name_in_db, attributes: [:slug, :content], disc_copies: nodes
+    :mnesia.start()
+    :mnesia.create_table(@table_name_in_db, attributes: [:slug, :content], disc_copies: nodes)
 
-    ret = :mnesia.wait_for_tables [@table_name_in_db], 5000
+    ret = :mnesia.wait_for_tables([@table_name_in_db], 5000)
 
     case ret do
       {:timeout, _} ->
-        error "Error starting exhtml databse, timeout."
+        error("Error starting exhtml databse, timeout.")
+
       {:error, reason} ->
-        error "Error starting exhtml databse, #{inspect reason}."
+        error("Error starting exhtml databse, #{inspect(reason)}.")
+
       _ ->
         nil
     end
+
     ret
   end
 
   def handle_call({:get, slug}, _from, state) do
-    ret = slug
+    ret =
+      slug
       |> db_result
       |> db_to_val
 
@@ -142,37 +141,47 @@ defmodule Exhtml.Table do
   end
 
   def handle_call({:get_since, slug, since}, _from, state) do
-    val = slug
+    val =
+      slug
       |> db_result
       |> db_to_val_with_time
 
-    ret = case val do
-      nil             -> nil
-      {nil, nil}      -> nil
-      {content, nil}  -> {:ok, content}
-      {content, t}    -> to_content_since(content, t, since)
-      _               -> {:ok, val}
-    end
+    ret =
+      case val do
+        nil -> nil
+        {nil, nil} -> nil
+        {content, nil} -> {:ok, content}
+        {content, t} -> to_content_since(content, t, since)
+        _ -> {:ok, val}
+      end
 
     {:reply, ret, state}
   end
 
   def handle_call({:set, slug, content}, _from, state) do
-    {:atomic, _} = :mnesia.transaction(fn ->
-      :mnesia.write(@table_name_in_db, {@table_name_in_db, slug, {content, DateTime.utc_now}}, :write)
-    end)
+    {:atomic, _} =
+      :mnesia.transaction(fn ->
+        :mnesia.write(
+          @table_name_in_db,
+          {@table_name_in_db, slug, {content, DateTime.utc_now()}},
+          :write
+        )
+      end)
+
     {:reply, :ok, state}
   end
 
   def handle_call({:rm, slug}, _from, state) do
-    {:atomic, _} = :mnesia.transaction(fn ->
-      :mnesia.delete(@table_name_in_db, slug, :write)
-    end)
+    {:atomic, _} =
+      :mnesia.transaction(fn ->
+        :mnesia.delete(@table_name_in_db, slug, :write)
+      end)
+
     {:reply, :ok, state}
   end
 
   defp db_result(slug) do
-    @table_name_in_db |> :mnesia.dirty_read(slug) |> List.first
+    @table_name_in_db |> :mnesia.dirty_read(slug) |> List.first()
   end
 
   defp db_to_val(nil), do: nil
@@ -184,11 +193,11 @@ defmodule Exhtml.Table do
   defp db_to_val_with_time({@table_name_in_db, _slug, content}), do: {content, nil}
 
   defp to_content_since(content, _, nil), do: {:ok, content}
+
   defp to_content_since(content, t, since) do
     case DateTime.compare(t, since) do
       :lt -> :unchanged
       _ -> {:ok, content}
     end
   end
-
 end
