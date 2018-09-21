@@ -26,6 +26,11 @@ defmodule Exhtml.Supervisor do
       ])
     )
 
+    Supervisor.start_child(
+      sup,
+      worker(Exhtml.Table, [])
+    )
+
     {:ok, sup}
   end
 
