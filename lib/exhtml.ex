@@ -32,6 +32,28 @@ defmodule Exhtml do
 
 
   @doc """
+  Start the repo engine. Before starting a repo, all actions will not be performed and
+  `{:error, :repo_not_started}` will be returned.
+  """
+  def start_repo(opts) do
+    Exhtml.Host.start_repo(@name, opts)
+  end
+
+
+  @doc """
+  Join an existing exhtml cluster.
+
+  * `node` - the node to connect
+  * `opts` - options to start this repo node, including:
+    * `data_dir` - where to store db datas, `./exhtml_contents` by default.
+    * `data_nodes` - which nodes are used to copy datas, `[node()]` by default.
+  """
+  def join_repo(node, opts) do
+    Exhtml.Host.join_repo(@name, node, opts)
+  end
+
+
+  @doc """
   Sets the content fetcher.
   A content fetcher is used when `Exhtml.update_content/1` is called.
   You can pass a function or module as content fetcher.
@@ -41,6 +63,7 @@ defmodule Exhtml do
   ## Examples:
   
       iex> Exhtml.start []
+      ...> Exhtml.start_repo []
       ...> Exhtml.set_content_fetcher(fn slug -> "Hi, #\{slug}!" end)
       :ok
       iex> Exhtml.update_content(:foo)
@@ -62,6 +85,7 @@ defmodule Exhtml do
   ## Examples:
 
       iex> Exhtml.start []
+      ...> Exhtml.start_repo([])
       ...> Exhtml.set_content(:foo, :bar)
       ...> Exhtml.get_content(:foo)
       :bar
@@ -101,6 +125,7 @@ defmodule Exhtml do
   ## Examples:
 
       iex> Exhtml.start []
+      ...> Exhtml.start_repo([])
       ...> Exhtml.set_content(:foo, :bar)
       ...> Exhtml.get_content(:foo)
       :bar
@@ -122,6 +147,7 @@ defmodule Exhtml do
   ## Examples:
 
       iex> Exhtml.start []
+      ...> Exhtml.start_repo([])
       ...> Exhtml.set_content_fetcher fn slug -> "Hi, #\{slug}!" end
       ...> Exhtml.update_content :wuliu
       "Hi, wuliu!"

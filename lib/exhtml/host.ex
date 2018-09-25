@@ -22,6 +22,21 @@ defmodule Exhtml.Host do
     GenServer.start_link(__MODULE__, opts, name: opts[:name])
   end
 
+
+  @doc """
+  Start the repo engine. Before starting a repo, all actions will not be performed and
+  `{:error, :repo_not_started}` will be returned.
+  """
+  def start_repo(server, opts) do
+    GenServer.call(server, {:start_repo, opts})
+  end
+
+
+  def join_repo(server, remote, opts) do
+    GenServer.call(server, {:join_repo, remote, opts})
+  end
+
+
   @doc """
   Gets html content from a host.
 
@@ -104,8 +119,25 @@ defmodule Exhtml.Host do
   ## Callbacks
 
   def init(opts) do
+    IO.puts "host: #{inspect opts}"
     {table, storage} = start_host_with_opts(opts)
     {:ok, {table, storage}}
+  end
+
+
+  def handle_call({:start_repo, opts}, _from, state) do
+    state
+    |> to_table_pid
+    |> Exhtml.Table.start_repo(opts)
+    |> to_reply(state)
+  end
+
+
+  def handle_call({:join_repo, remote, opts}, _from, state) do
+    state
+    |> to_table_pid
+    |> Exhtml.Table.join_repo(remote, opts)
+    |> to_reply(state)
   end
 
 
@@ -197,7 +229,7 @@ defmodule Exhtml.Host do
 
 
   defp set_content_to_table(nil, _, _), do: {:error, :not_running}
-  defp set_content_to_table(server, _slug, content = {:error, _}), do: content
+  defp set_content_to_table(_, _slug, content = {:error, _}), do: content
   defp set_content_to_table(server, slug, content) do
     Exhtml.Table.set(server, slug, content)
   end
