@@ -3,6 +3,10 @@ defmodule Exhtml.Repo do
   use GenServer
   require Logger
 
+  @moduledoc """
+  Exhtml.Repo holds the core K/V data of the contents.
+  """
+
   @table_name_in_db :exhtml_contents
   @default_data_dir "./exhtml_contents"
 
@@ -25,8 +29,8 @@ defmodule Exhtml.Repo do
   end
 
 
-  def join(remote_node) do
-    GenServer.start_link(__MODULE__, {:join, remote_node})
+  def join(remote_node, opts) do
+    GenServer.start_link(__MODULE__, {:join, remote_node, opts})
   end
 
 
@@ -50,12 +54,33 @@ defmodule Exhtml.Repo do
   end
 
 
+  def accept(new_node) do
+    with _ <- :mnesia.change_config(:extra_db_nodes, [new_node]),
+         _ <- :mnesia.add_table_copy(:schema, new_node, :disc_copies) do
+
+      case :mnesia.add_table_copy(@table_name_in_db, new_node, :disc_copies) do
+        {:atomic, :ok} ->
+          Logger.debug(fn -> "accpeted new node: #{new_node}" end)
+          :ok
+
+        {:aborted, {:already_exists, _, _}} ->
+          Logger.debug(fn -> "accpeted new node: #{new_node}" end)
+          :ok
+
+        err ->
+          err
+      end
+    end
+  end
+
+
   ## callbacks
 
-  def init({:join, remote_node}) do
-    with :ok <- Node.connect(remote_node),
-         {:ok, _} <- :rpc.call(remote_node, Exhtml.Repo, :accept, node()) do
-      :ok
+  def init({:join, remote_node, opts}) do
+    with true <- Node.connect(remote_node),
+         :ok <- start_empty_db(opts),
+         :ok <- :rpc.call(remote_node, Exhtml.Repo, :accept, [node()]) do
+      {:ok, %{}}
     end
   end
 
@@ -71,6 +96,7 @@ defmodule Exhtml.Repo do
   
 
   defp start_db(data_dir, nodes) do
+    Logger.debug(fn -> "starting repo, data dir: #{data_dir}" end)
     File.mkdir_p data_dir
 
     :mnesia |> :application.load
@@ -92,6 +118,15 @@ defmodule Exhtml.Repo do
         nil
     end
     ret
+  end
+
+
+  defp start_empty_db(opts) do
+    data_dir = opts[:data_dir] || @default_data_dir
+    :mnesia |> :application.load
+    :mnesia |> :application.set_env(:dir, to_charlist(data_dir))
+    :mnesia |> :application.set_env(:auto_repair, true)
+    :mnesia.start
   end
 
   def handle_call({:get, slug}, _from, state) do
