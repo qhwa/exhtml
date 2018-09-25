@@ -3,11 +3,12 @@ defmodule ExhtmlTest.HostTest do
 
   use ExUnit.Case
   doctest Exhtml.Host
-  alias Exhtml.Host
+  alias Exhtml.{Host, Repo}
 
   setup do
     Exhtml.Stash.start_link(%{}, %{})
-    {:ok, pid} = Host.start_link([])
+    {:ok, repo} = Repo.start_link([])
+    {:ok, pid} = Host.start_link(repo: repo)
     {:ok, %{server: pid}}
   end
 
@@ -37,7 +38,11 @@ defmodule ExhtmlTest.HostTest do
 
 
   test "fetch and set content by name and slug" do
-    {:ok, server} = Host.start_link(content_fetcher: Exhtml.Storage.TestStorage)
+    {:ok, repo} = Repo.start_link([])
+    {:ok, server} = Host.start_link(
+      content_fetcher: Exhtml.Storage.TestStorage,
+      repo: repo
+    )
     Host.update_content(server, "some-content")
 
     assert Host.get_content(server, "some-content") == "SOME-CONTENT"
@@ -75,7 +80,11 @@ defmodule ExhtmlTest.HostTest do
 
 
   test "should not update content when fetche content is invalid" do
-    {:ok, pid} = Host.start_link([content_fetcher: fn _ -> {:error, :invalid} end])
+    {:ok, repo} = Repo.start_link([])
+    {:ok, pid} = Host.start_link([
+      content_fetcher: fn _ -> {:error, :invalid} end,
+      repo: repo
+    ])
     assert Host.update_content(pid, :foo_err_update) == {:error, :invalid}
     assert Host.get_content_since(pid, :foo_err_update, nil) == nil
   end

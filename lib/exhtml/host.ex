@@ -22,6 +22,16 @@ defmodule Exhtml.Host do
     GenServer.start_link(__MODULE__, opts, name: opts[:name])
   end
 
+
+  @doc """
+  Start the repo engine. Before starting a repo, all actions will not be performed and
+  `{:error, :repo_not_started}` will be returned.
+  """
+  def start_repo(server, opts) do
+    GenServer.call(server, {:start_repo, opts})
+  end
+
+
   @doc """
   Gets html content from a host.
 
@@ -106,6 +116,14 @@ defmodule Exhtml.Host do
   def init(opts) do
     {table, storage} = start_host_with_opts(opts)
     {:ok, {table, storage}}
+  end
+
+
+  def handle_call({:start_repo, opts}, _from, state) do
+    state
+    |> to_table_pid
+    |> Exhtml.Table.start_repo(opts)
+    |> to_reply(state)
   end
 
 
