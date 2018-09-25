@@ -8,7 +8,7 @@ defmodule Exhtml.Mixfile do
   def project do
     [
       app: :exhtml,
-      version: "0.3.1",
+      version: "0.4.0-beta1",
       elixir: ">= 1.4.0",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -25,7 +25,8 @@ defmodule Exhtml.Mixfile do
   def application do
     [
       applications: [:logger],
-      included_applications: [:mnesia]
+      included_applications: [:mnesia],
+      mod: {Exhtml.App, []}
     ]
   end
 
