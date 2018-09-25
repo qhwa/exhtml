@@ -54,6 +54,8 @@ defmodule Exhtml.Repo do
   end
 
 
+  ## callbacks
+
   def accept(new_node) do
     with _ <- :mnesia.change_config(:extra_db_nodes, [new_node]),
          _ <- :mnesia.add_table_copy(:schema, new_node, :disc_copies) do
@@ -68,15 +70,15 @@ defmodule Exhtml.Repo do
           :ok
 
         err ->
+          Logger.error(fn -> "error accpeting new node: #{new_node}, reason: #{inspect err}" end)
           err
       end
     end
   end
 
 
-  ## callbacks
-
   def init({:join, remote_node, opts}) do
+    Logger.debug(fn -> "joining existing repo #{inspect remote_node}, options: #{inspect opts}" end)
     with true <- Node.connect(remote_node),
          :ok <- start_empty_db(opts),
          :ok <- :rpc.call(remote_node, Exhtml.Repo, :accept, [node()]) do

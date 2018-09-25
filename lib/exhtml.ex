@@ -41,6 +41,19 @@ defmodule Exhtml do
 
 
   @doc """
+  Join an existing exhtml cluster.
+
+  * `node` - the node to connect
+  * `opts` - options to start this repo node, including:
+    * `data_dir` - where to store db datas, `./exhtml_contents` by default.
+    * `data_nodes` - which nodes are used to copy datas, `[node()]` by default.
+  """
+  def join_repo(node, opts) do
+    Exhtml.Host.join_repo(@name, node, opts)
+  end
+
+
+  @doc """
   Sets the content fetcher.
   A content fetcher is used when `Exhtml.update_content/1` is called.
   You can pass a function or module as content fetcher.

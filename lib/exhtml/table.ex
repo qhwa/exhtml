@@ -43,6 +43,11 @@ defmodule Exhtml.Table do
   end
 
 
+  def join_repo(server, remote, opts) do
+    GenServer.call(server, {:join_repo, remote, opts})
+  end
+
+
   @doc """
   Gets content of the slug from the store.
 
@@ -121,6 +126,12 @@ defmodule Exhtml.Table do
 
   def handle_call({:start_repo, opts}, _from, state) do
     {:ok, repo} = Repo.start_link(opts)
+    {:reply, :ok, Map.put(state, :repo, repo)}
+  end
+
+  def handle_call({:join_repo, remote, opts}, _from, state) do
+    {:ok, repo} = Repo.join(remote, opts)
+    IO.inspect Map.put(state, :repo, repo)
     {:reply, :ok, Map.put(state, :repo, repo)}
   end
 
