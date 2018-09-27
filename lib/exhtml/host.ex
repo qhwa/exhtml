@@ -119,7 +119,6 @@ defmodule Exhtml.Host do
   ## Callbacks
 
   def init(opts) do
-    IO.puts "host: #{inspect opts}"
     {table, storage} = start_host_with_opts(opts)
     {:ok, {table, storage}}
   end
@@ -195,7 +194,7 @@ defmodule Exhtml.Host do
   defp start_host_with_opts(opts) do
     {:ok, table_pid}   = Exhtml.Table.start_link(opts)
     {:ok, storage_pid} = Exhtml.Storage.start_link(
-      fetcher: opts[:content_fetcher] || Exhtml.Storage.DefaultStorage,
+      fetcher: opts[:content_fetcher] || Exhtml.Storage.DefaultStorage
     )
 
     {table_pid, storage_pid}

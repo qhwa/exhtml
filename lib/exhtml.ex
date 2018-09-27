@@ -32,9 +32,12 @@ defmodule Exhtml do
 
 
   @doc """
-  Start the repo engine. Before starting a repo, all actions will not be performed and
+  Start the repo engine.
+  
+  Before starting a repo, all actions will not be performed and
   `{:error, :repo_not_started}` will be returned.
   """
+  @spec start_repo([key: any]) :: :ok | {:error, any}
   def start_repo(opts) do
     Exhtml.Host.start_repo(@name, opts)
   end
@@ -48,6 +51,7 @@ defmodule Exhtml do
     * `data_dir` - where to store db datas, `./exhtml_contents` by default.
     * `data_nodes` - which nodes are used to copy datas, `[node()]` by default.
   """
+  @spec join_repo(node, [key: any]) :: :ok | {:error, any}
   def join_repo(node, opts) do
     Exhtml.Host.join_repo(@name, node, opts)
   end
