@@ -6,7 +6,6 @@ defmodule ExhtmlTest.HostTest do
   alias Exhtml.{Host, Repo}
 
   setup do
-    Exhtml.Stash.start_link(%{}, %{})
     {:ok, repo} = Repo.start_link([])
     {:ok, pid} = Host.start_link(repo: repo)
     {:ok, %{server: pid}}
