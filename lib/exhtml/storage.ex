@@ -93,6 +93,10 @@ defmodule Exhtml.Storage do
 
 
   # Callbacks
+  @doc false
+  def init(args) do
+    {:ok, args}
+  end
 
   def handle_call({:fetch, slug}, _from, state) do
     content = fetch_content(slug, state[:fetcher])

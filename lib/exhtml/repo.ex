@@ -12,43 +12,58 @@ defmodule Exhtml.Repo do
 
   @doc """
   Starts a mnesia repo.
+
   * `opts` - options for starting the process:
       * `data_dir` indicates which path the data will be persited in.
       * `data_nodes` indicates which nodes will hold persisted data. Other nodes
           will only hold data in memories.
   Returns `{:ok, pid}` if succeed, `{:error, reason}` otherwise.
   """
-
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts)
   end
 
 
+  @doc """
+  Stops a mnesia repo.
+  """
+  @spec stop(GenServer.server) :: :ok | {:error, any}
   def stop(repo) do
     GenServer.stop(repo, :normal)
   end
 
 
+  @doc """
+  Joins an existing mnesia database cluster.
+
+  * `remote_node` - the node to connect, which should be running the mnesia database.
+  * `opts` - options to start local mnesia database.
+  """
+  @spec join(node, [key: any]) :: {:ok, pid} | {:error, any}
   def join(remote_node, opts) do
     GenServer.start_link(__MODULE__, {:join, remote_node, opts})
   end
 
 
+  @doc false
   def get(repo, slug) do
     GenServer.call(repo, {:get, slug})
   end
 
 
+  @doc false
   def get_since(repo, slug, since) do
     GenServer.call(repo, {:get_since, slug, since})
   end
 
 
+  @doc false
   def set(repo, slug, content) do
     GenServer.call(repo, {:set, slug, content})
   end
 
 
+  @doc false
   def rm(repo, slug) do
     GenServer.call(repo, {:rm, slug})
   end
@@ -56,6 +71,10 @@ defmodule Exhtml.Repo do
 
   ## callbacks
 
+  @doc """
+  Accpets a new node into the current repo (mnesia database cluster).
+  """
+  @spec accept(node) :: :ok | {:error, any}
   def accept(new_node) do
     with _ <- :mnesia.change_config(:extra_db_nodes, [new_node]),
          _ <- :mnesia.add_table_copy(:schema, new_node, :disc_copies) do
@@ -77,6 +96,7 @@ defmodule Exhtml.Repo do
   end
 
 
+  @doc false
   def init({:join, remote_node, opts}) do
     Logger.debug(fn -> "joining existing repo #{inspect remote_node}, options: #{inspect opts}" end)
     with true <- Node.connect(remote_node),

@@ -23,6 +23,7 @@ defmodule Exhtml.Table do
 
   @doc """
   Starts a Exhtml.Table process.
+
   * `opts` - options for starting the process:
     * `repo` - the pid of started Exhtml.Repo server.
       If unprovided, all request to Exhtml.Table will return `{:error, :repo_not_started}`
@@ -35,14 +36,28 @@ defmodule Exhtml.Table do
 
 
   @doc """
-  Start the repo engine. Before starting a repo, all actions will not be performed and
+  Start the repo engine.
+  
+  Before starting a repo, all actions will not be performed and
   `{:error, :repo_not_started}` will be returned.
+
+  * `server` - PID or name of the server
+  * `opts` - options to start the repo, will be passed to `Exhtml.Repo.start_link/1`
   """
+  @spec start_repo(server, [key: any]) :: :ok | {:error, any}
   def start_repo(server, opts) do
     GenServer.call(server, {:start_repo, opts})
   end
 
 
+  @doc """
+  Join an existing repo.
+
+  * `server` - PID or name of the server
+  * `remote` - the remote node to connect and join
+  * `opts` - options to start the repo, will be passed to `Exhtml.Repo.start_link/1`
+  """
+  @spec join_repo(server, node, [key: any]) :: :ok | {:error, any}
   def join_repo(server, remote, opts) do
     GenServer.call(server, {:join_repo, remote, opts})
   end
@@ -131,7 +146,6 @@ defmodule Exhtml.Table do
 
   def handle_call({:join_repo, remote, opts}, _from, state) do
     {:ok, repo} = Repo.join(remote, opts)
-    IO.inspect Map.put(state, :repo, repo)
     {:reply, :ok, Map.put(state, :repo, repo)}
   end
 

@@ -14,13 +14,6 @@ defmodule Exhtml.Supervisor do
 
 
   defp start_workers(sup, opts) do
-    registry_state = %{ping: :pong}
-
-    Supervisor.start_child(
-      sup,
-      worker(Exhtml.Stash, [registry_state])
-    )
-
     Supervisor.start_child(
       sup,
       worker(Exhtml.Host, [
@@ -32,6 +25,7 @@ defmodule Exhtml.Supervisor do
   end
 
 
+  @doc false
   def init(_) do
     supervise([], strategy: :one_for_one)
   end

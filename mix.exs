@@ -43,7 +43,7 @@ defmodule Exhtml.Mixfile do
     [
       {:credo, "~> 0.4", only: [:dev]},
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:inch_ex, ">= 0.0.0", only: :docs}
+      {:inch_ex, github: "rrrene/inch_ex", only: :docs}
     ]
   end
 

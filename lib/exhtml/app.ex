@@ -2,12 +2,11 @@ defmodule Exhtml.App do
 
   import Logger
   
-  @moduledoc """
-  This is the Application specification of Exhtml.
-  """
+  @moduledoc false
 
   use Application
 
+  @doc false
   def start(_type, _args) do
     import Supervisor.Spec
 

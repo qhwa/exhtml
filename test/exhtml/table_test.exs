@@ -7,7 +7,6 @@ defmodule Exhtml.TableTest do
   describe "before all set" do
 
     setup do
-      Exhtml.Stash.start_link(%{}, %{})
       {:ok, pid} = Exhtml.Table.start_link auto_start_repo: false
       Exhtml.Table.rm(pid, "foo")
       {:ok, %{pid: pid}}
@@ -29,7 +28,6 @@ defmodule Exhtml.TableTest do
   describe "after all set" do
 
     setup do
-      Exhtml.Stash.start_link(%{}, %{})
       {:ok, pid} = Exhtml.Table.start_link auto_start_repo: false
       Exhtml.Table.start_repo(pid, [])
 
