@@ -8,6 +8,7 @@ defmodule Exhtml.App do
 
   use Application
 
+  @doc false
   def start(_type, _args) do
     import Supervisor.Spec
 

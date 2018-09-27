@@ -32,6 +32,7 @@ defmodule Exhtml.Supervisor do
   end
 
 
+  @doc false
   def init(_) do
     supervise([], strategy: :one_for_one)
   end

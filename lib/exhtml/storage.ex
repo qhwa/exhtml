@@ -93,6 +93,7 @@ defmodule Exhtml.Storage do
 
 
   # Callbacks
+  @doc false
   def init(args) do
     {:ok, args}
   end

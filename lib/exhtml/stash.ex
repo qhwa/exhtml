@@ -42,6 +42,7 @@ defmodule Exhtml.Stash do
 
   # Callbacks
 
+  @doc false
   def init(state) do
     {:ok, state}
   end
