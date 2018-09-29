@@ -8,7 +8,7 @@ defmodule Exhtml.Table do
 
   ## Examples:
   
-      iex> {:ok, pid} = Exhtml.Table.start_link []
+      iex> {:ok, pid} = Exhtml.Table.start_link master: true
       ...> Exhtml.Table.set(pid, :foo, :bar)
       :ok
       ...> Exhtml.Table.get(pid, :foo)
@@ -97,7 +97,7 @@ defmodule Exhtml.Table do
 
   ## Examples:
   
-      iex> {:ok, pid} = Exhtml.Table.start_link []
+      iex> {:ok, pid} = Exhtml.Table.start_link master: true
       ...> Exhtml.Table.set(pid, :foo, :bar)
       :ok
       iex> Exhtml.Table.get(pid, :foo)
@@ -135,6 +135,9 @@ defmodule Exhtml.Table do
         {:ok, %{repo: repo}}
 
       {nil, false} ->
+        {:ok, %{repo: nil}}
+
+      {nil, nil} ->
         {:ok, %{repo: nil}}
 
       {nil, n} when is_atom(n) ->
