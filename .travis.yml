@@ -1,8 +1,8 @@
 language: elixir
 elixir:
-  - 1.4.0
+  - 1.7.3
 opt_release:
-  - 18.2.1
+  - 21
 after_script:
   - mix deps.get --only docs
   - MIX_ENV=docs mix inch.report
