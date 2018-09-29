@@ -8,7 +8,7 @@ defmodule Exhtml.Table do
 
   ## Examples:
   
-      iex> {:ok, pid} = Exhtml.Table.start_link []
+      iex> {:ok, pid} = Exhtml.Table.start_link master: true
       ...> Exhtml.Table.set(pid, :foo, :bar)
       :ok
       ...> Exhtml.Table.get(pid, :foo)
@@ -97,7 +97,7 @@ defmodule Exhtml.Table do
 
   ## Examples:
   
-      iex> {:ok, pid} = Exhtml.Table.start_link []
+      iex> {:ok, pid} = Exhtml.Table.start_link master: true
       ...> Exhtml.Table.set(pid, :foo, :bar)
       :ok
       iex> Exhtml.Table.get(pid, :foo)
@@ -126,16 +126,27 @@ defmodule Exhtml.Table do
 
   @doc false
   def init(opts) do
-    case {opts[:repo], opts[:auto_start_repo]} do
-      {nil, false} ->
-        {:ok, %{repo: nil}}
+    case {opts[:repo], opts[:master]} do
+      {repo, _} when is_pid(repo) ->
+        {:ok, %{repo: repo}}
 
-      {nil, _} ->
+      {nil, true} ->
         {:ok, repo} = Repo.start_link(opts)
         {:ok, %{repo: repo}}
 
-      {repo, _} when is_pid(repo) ->
+      {nil, false} ->
+        {:ok, %{repo: nil}}
+
+      {nil, nil} ->
+        {:ok, %{repo: nil}}
+
+      {nil, n} when is_atom(n) ->
+        {:ok, repo} = Repo.join(n, opts)
         {:ok, %{repo: repo}}
+
+      {nil, _} ->
+        {:ok, %{repo: nil}}
+
     end
   end
 

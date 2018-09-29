@@ -10,7 +10,7 @@ defmodule Exhtml do
 
   ## Examples:
 
-      iex> Exhtml.start []
+      iex> Exhtml.start master: true
       ...> #update
       ...> Exhtml.update_content(:foo)
       "default_content_for_foo"
@@ -66,8 +66,7 @@ defmodule Exhtml do
 
   ## Examples:
   
-      iex> Exhtml.start []
-      ...> Exhtml.start_repo []
+      iex> Exhtml.start master: true
       ...> Exhtml.set_content_fetcher(fn slug -> "Hi, #\{slug}!" end)
       :ok
       iex> Exhtml.update_content(:foo)
@@ -88,8 +87,7 @@ defmodule Exhtml do
 
   ## Examples:
 
-      iex> Exhtml.start []
-      ...> Exhtml.start_repo([])
+      iex> Exhtml.start master: true
       ...> Exhtml.set_content(:foo, :bar)
       ...> Exhtml.get_content(:foo)
       :bar
@@ -128,8 +126,7 @@ defmodule Exhtml do
 
   ## Examples:
 
-      iex> Exhtml.start []
-      ...> Exhtml.start_repo([])
+      iex> Exhtml.start master: true
       ...> Exhtml.set_content(:foo, :bar)
       ...> Exhtml.get_content(:foo)
       :bar
@@ -150,8 +147,7 @@ defmodule Exhtml do
 
   ## Examples:
 
-      iex> Exhtml.start []
-      ...> Exhtml.start_repo([])
+      iex> Exhtml.start master: true
       ...> Exhtml.set_content_fetcher fn slug -> "Hi, #\{slug}!" end
       ...> Exhtml.update_content :wuliu
       "Hi, wuliu!"
@@ -172,7 +168,7 @@ defmodule Exhtml do
 
   ## Examples:
 
-      iex> Exhtml.start []
+      iex> Exhtml.start master: true
       ...> Exhtml.set_content :foo, :bar
       ...> Exhtml.get_content :foo
       :bar
