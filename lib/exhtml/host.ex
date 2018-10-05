@@ -7,7 +7,7 @@ defmodule Exhtml.Host do
   @type slug :: Exhtml.slug()
 
   use GenServer
-  alias Exhtml.Table
+  alias Exhtml.{Table, Storage}
 
   @doc """
   Starts a host.
@@ -150,7 +150,7 @@ defmodule Exhtml.Host do
 
   def handle_call({:update_content, slug}, _from, state) do
     {table_pid, storage_pid} = state
-    content = Exhtml.Storage.fetch(storage_pid, slug)
+    content = Storage.fetch(storage_pid, slug)
 
     result =
       case set_content_to_table(table_pid, slug, content) do
@@ -171,7 +171,7 @@ defmodule Exhtml.Host do
   def handle_call({:set_content_fetcher, f}, _from, state) do
     state
     |> elem(1)
-    |> Exhtml.Storage.set_fetcher(f)
+    |> Storage.set_fetcher(f)
     |> to_reply(state)
   end
 
@@ -179,7 +179,7 @@ defmodule Exhtml.Host do
     {:ok, table_pid} = Table.start_link(opts)
 
     {:ok, storage_pid} =
-      Exhtml.Storage.start_link(fetcher: opts[:content_fetcher] || Exhtml.Storage.DefaultStorage)
+      Storage.start_link(fetcher: opts[:content_fetcher] || Storage.DefaultStorage)
 
     {table_pid, storage_pid}
   end

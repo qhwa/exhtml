@@ -7,15 +7,15 @@
 Exhtml is a library that handles HTML page serving.
 There are some benifts to have a dynamic HTML page host rather than static server:
 
-1. it's easy to deploy a small number of pages.
-2. it's safer to make the HTML server pull content from backend storage than push contents to it.
-3. you can add middlewares as you wish, such as performance monitoring, server-side procsessing, etc..
+1.it's easy to deploy a small number of pages.
+2.it's safer to make the HTML server pull content from backend storage than push contents to it.
+3.you can add middlewares as you wish, such as performance monitoring, server-side procsessing, etc..
 
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
 
-1. Add `exhtml` to your list of dependencies in `mix.exs`:
+1.Add `exhtml` to your list of dependencies in `mix.exs`:
 
   ```elixir
   def deps do
@@ -23,7 +23,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   end
   ```
 
-2. Ensure `exhtml` is started before your application:
+2.Ensure `exhtml` is started before your application:
 
   ```elixir
   def application do
@@ -31,7 +31,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   end
   ```
 
-3. (optional) Add configuration into your project:
+3.(optional) Add configuration into your project:
 
   ```elixir
   use Mix.Config
@@ -70,5 +70,5 @@ MIT liccense
 
 ## Contributions
 
-* [Pull requests](https://github.com/qhwa/exhtml/pulls) are welcome.
-* [Issues here](https://github.com/qhwa/exhtml/issues)
+*[Pull requests](https://github.com/qhwa/exhtml/pulls) are welcome.
+*[Issues here](https://github.com/qhwa/exhtml/issues)
