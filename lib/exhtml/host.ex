@@ -1,11 +1,10 @@
 defmodule Exhtml.Host do
-
   @moduledoc """
   Exhtml.Host represents the content server.
   """
 
-  @type server :: GenServer.server
-  @type slug :: Exhtml.slug
+  @type server :: GenServer.server()
+  @type slug :: Exhtml.slug()
 
   use GenServer
 
@@ -22,18 +21,15 @@ defmodule Exhtml.Host do
     GenServer.start_link(__MODULE__, opts, name: opts[:name])
   end
 
-
   @doc false
   def start_repo(server, opts) do
     GenServer.call(server, {:start_repo, opts})
   end
 
-
   @doc false
   def join_repo(server, remote, opts) do
     GenServer.call(server, {:join_repo, remote, opts})
   end
-
 
   @doc """
   Gets html content from a host.
@@ -46,7 +42,6 @@ defmodule Exhtml.Host do
     GenServer.call(server, {:get_content, slug})
   end
 
-
   @doc """
   Gets html content from a host with cache time.
 
@@ -54,11 +49,10 @@ defmodule Exhtml.Host do
   * `slug` - the key of the content
   * `time` - the modified time to check.
   """
-  @spec get_content_since(server, slug, DateTime.t) :: any
+  @spec get_content_since(server, slug, DateTime.t()) :: any
   def get_content_since(server, slug, time) do
     GenServer.call(server, {:get_content_since, slug, time})
   end
-
 
   @doc """
   Sets html content to a host with a slug.
@@ -74,7 +68,6 @@ defmodule Exhtml.Host do
     GenServer.call(server, {:set_content, slug, value})
   end
 
-
   @doc """
   Fetchs and sets the content from the storage to a host's table.
 
@@ -88,7 +81,6 @@ defmodule Exhtml.Host do
     GenServer.call(server, {:update_content, slug})
   end
 
-
   @doc """
   Deletes the content from a host.
 
@@ -99,7 +91,6 @@ defmodule Exhtml.Host do
   def delete_content(server, slug) do
     GenServer.call(server, {:delete_content, slug})
   end
-
 
   @doc """
   Sets the content fetcher. A fetcher is used to fetch
@@ -113,7 +104,6 @@ defmodule Exhtml.Host do
     GenServer.call(server, {:set_content_fetcher, f})
   end
 
-
   ## Callbacks
 
   @doc false
@@ -122,14 +112,12 @@ defmodule Exhtml.Host do
     {:ok, {table, storage}}
   end
 
-
   def handle_call({:start_repo, opts}, _from, state) do
     state
     |> to_table_pid
     |> Exhtml.Table.start_repo(opts)
     |> to_reply(state)
   end
-
 
   def handle_call({:join_repo, remote, opts}, _from, state) do
     state
@@ -138,98 +126,88 @@ defmodule Exhtml.Host do
     |> to_reply(state)
   end
 
-
   def handle_call({:get_content, slug}, _from, state) do
     state
-      |> to_table_pid
-      |> get_content_from_table(slug)
-      |> to_reply(state)
+    |> to_table_pid
+    |> get_content_from_table(slug)
+    |> to_reply(state)
   end
-
 
   def handle_call({:get_content_since, slug, time}, _from, state) do
     state
-      |> to_table_pid
-      |> get_content_from_table(slug, time)
-      |> to_reply(state)
+    |> to_table_pid
+    |> get_content_from_table(slug, time)
+    |> to_reply(state)
   end
-
 
   def handle_call({:set_content, slug, value}, _from, state) do
     state
-      |> to_table_pid
-      |> set_content_to_table(slug, value)
-      |> to_reply(state)
+    |> to_table_pid
+    |> set_content_to_table(slug, value)
+    |> to_reply(state)
   end
-
 
   def handle_call({:update_content, slug}, _from, state) do
     {table_pid, storage_pid} = state
     content = Exhtml.Storage.fetch(storage_pid, slug)
-    result = case set_content_to_table(table_pid, slug, content) do
-      :ok -> content
-      ret -> ret
-    end
+
+    result =
+      case set_content_to_table(table_pid, slug, content) do
+        :ok -> content
+        ret -> ret
+      end
+
     {:reply, result, state}
   end
 
-
   def handle_call({:delete_content, slug}, _from, state) do
     state
-      |> elem(0)
-      |> Exhtml.Table.rm(slug)
-      |> to_reply(state)
+    |> elem(0)
+    |> Exhtml.Table.rm(slug)
+    |> to_reply(state)
   end
-
 
   def handle_call({:set_content_fetcher, f}, _from, state) do
     state
-      |> elem(1)
-      |> Exhtml.Storage.set_fetcher(f)
-      |> to_reply(state)
+    |> elem(1)
+    |> Exhtml.Storage.set_fetcher(f)
+    |> to_reply(state)
   end
 
-
   defp start_host_with_opts(opts) do
-    {:ok, table_pid}   = Exhtml.Table.start_link(opts)
-    {:ok, storage_pid} = Exhtml.Storage.start_link(
-      fetcher: opts[:content_fetcher] || Exhtml.Storage.DefaultStorage
-    )
+    {:ok, table_pid} = Exhtml.Table.start_link(opts)
+
+    {:ok, storage_pid} =
+      Exhtml.Storage.start_link(fetcher: opts[:content_fetcher] || Exhtml.Storage.DefaultStorage)
 
     {table_pid, storage_pid}
   end
-
 
   defp to_table_pid(state) do
     {table_pid, _storage_pid} = state
     table_pid
   end
 
-
   defp get_content_from_table(nil, _) do
     {:error, :not_running}
   end
-
 
   defp get_content_from_table(server, slug) do
     Exhtml.Table.get(server, slug)
   end
 
-
   defp get_content_from_table(server, slug, since) do
     Exhtml.Table.get_since(server, slug, since)
   end
-
 
   defp to_reply(ret, state) do
     {:reply, ret, state}
   end
 
-
   defp set_content_to_table(nil, _, _), do: {:error, :not_running}
   defp set_content_to_table(_, _slug, content = {:error, _}), do: content
+
   defp set_content_to_table(server, slug, content) do
     Exhtml.Table.set(server, slug, content)
   end
-
 end

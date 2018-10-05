@@ -1,5 +1,4 @@
 defmodule Exhtml.Storage.DefaultStorage do
-  
   @moduledoc """
   Default empty storage.
   """
@@ -15,9 +14,8 @@ defmodule Exhtml.Storage.DefaultStorage do
       "default_content_for_foo"
 
   """
-  @spec fetch(Exhtml.slug) :: binary
+  @spec fetch(Exhtml.slug()) :: binary
   def fetch(slug) do
     "default_content_for_#{slug}"
   end
-
 end

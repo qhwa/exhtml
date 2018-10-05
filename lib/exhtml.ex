@@ -1,5 +1,4 @@
 defmodule Exhtml do
-
   @type slug :: binary | atom
 
   @moduledoc """
@@ -22,26 +21,23 @@ defmodule Exhtml do
 
   @name :exhtml_host
 
-
   @doc false
   def start(opts) do
     opts
     |> Keyword.put(:name, @name)
-    |> Exhtml.Host.start_link
+    |> Exhtml.Host.start_link()
   end
-
 
   @doc """
   Start the repo engine.
-  
+
   Before starting a repo, all actions will not be performed and
   `{:error, :repo_not_started}` will be returned.
   """
-  @spec start_repo([key: any]) :: :ok | {:error, any}
+  @spec start_repo(key: any) :: :ok | {:error, any}
   def start_repo(opts) do
     Exhtml.Host.start_repo(@name, opts)
   end
-
 
   @doc """
   Join an existing exhtml cluster.
@@ -51,11 +47,10 @@ defmodule Exhtml do
     * `data_dir` - where to store db datas, `./exhtml_contents` by default.
     * `data_nodes` - which nodes are used to copy datas, `[node()]` by default.
   """
-  @spec join_repo(node, [key: any]) :: :ok | {:error, any}
+  @spec join_repo(node, key: any) :: :ok | {:error, any}
   def join_repo(node, opts) do
     Exhtml.Host.join_repo(@name, node, opts)
   end
-
 
   @doc """
   Sets the content fetcher.
@@ -65,7 +60,7 @@ defmodule Exhtml do
   Returns `:ok`.
 
   ## Examples:
-  
+
       iex> Exhtml.start master: true
       ...> Exhtml.set_content_fetcher(fn slug -> "Hi, #\{slug}!" end)
       :ok
@@ -78,7 +73,6 @@ defmodule Exhtml do
   def set_content_fetcher(f) do
     Exhtml.Host.set_content_fetcher(@name, f)
   end
-
 
   @doc """
   Gets html content from a host.
@@ -97,7 +91,6 @@ defmodule Exhtml do
   def get_content(slug) do
     Exhtml.Host.get_content(@name, slug)
   end
-  
 
   @doc """
   Gets html content from a host.
@@ -110,11 +103,10 @@ defmodule Exhtml do
   `{:not_modified}` - If the content has not changed since the time;
   content - if the content has changed since the time.
   """
-  @spec get_content_since(slug, DateTime.t) :: any
+  @spec get_content_since(slug, DateTime.t()) :: any
   def get_content_since(slug, time) do
     Exhtml.Host.get_content_since(@name, slug, time)
   end
-
 
   @doc """
   Sets html content to a host with a slug.
@@ -137,7 +129,6 @@ defmodule Exhtml do
     Exhtml.Host.set_content(@name, slug, value)
   end
 
-
   @doc """
   Fetchs and sets the content from the storage to a host's table.
 
@@ -157,7 +148,6 @@ defmodule Exhtml do
   def update_content(slug) do
     Exhtml.Host.update_content(@name, slug)
   end
-
 
   @doc """
   Deletes the content from a host.
@@ -182,5 +172,4 @@ defmodule Exhtml do
   def delete_content(slug) do
     Exhtml.Host.delete_content(@name, slug)
   end
-
 end

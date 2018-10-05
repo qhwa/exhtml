@@ -1,11 +1,10 @@
 defmodule Exhtml.Storage do
-
   @moduledoc """
   Storage provides a `fetch` method used to fetch content from outside
   source.
 
   ## Examples:
-  
+
       iex> {:ok, pid} = Exhtml.Storage.start_link []
       ...> Exhtml.Storage.fetch(pid, :foo)
       nil
@@ -22,11 +21,10 @@ defmodule Exhtml.Storage do
       "foo on remote"
 
   """
-  
+
   use GenServer
 
-  @type slug :: Exhtml.slug
-
+  @type slug :: Exhtml.slug()
 
   # APIs
 
@@ -44,17 +42,16 @@ defmodule Exhtml.Storage do
   Returns `nil` or the content stored.
 
   ## Examples:
-  
+
       iex> {:ok, pid} = Exhtml.Storage.start_link [fetcher: fn slug -> "default_content_for_#\{slug}" end]
       ...> Exhtml.Storage.fetch(pid, :foo)
       "default_content_for_foo"
 
   """
-  @spec fetch(GenServer.server, term) :: any
+  @spec fetch(GenServer.server(), term) :: any
   def fetch(pid, slug) do
     GenServer.call(pid, {:fetch, slug})
   end
-
 
   @doc """
   Dynamicly set content fetcher. A fetcher can be a function, or a module that can repsond to &fetch/1.
@@ -68,7 +65,7 @@ defmodule Exhtml.Storage do
   ## Examples:
 
   use a function as fetcher:
-  
+
       iex> {:ok, pid} = Exhtml.Storage.start_link []
       ...> Exhtml.Storage.set_fetcher(pid, fn _slug -> :bar end)
       :ok
@@ -86,11 +83,10 @@ defmodule Exhtml.Storage do
       "Hello, miao~"
 
   """
-  @spec set_fetcher(GenServer.server, (slug -> any) | module) :: :ok
+  @spec set_fetcher(GenServer.server(), (slug -> any) | module) :: :ok
   def set_fetcher(pid, f) do
     GenServer.call(pid, {:set_fetcher, f})
   end
-
 
   # Callbacks
   @doc false
@@ -109,6 +105,5 @@ defmodule Exhtml.Storage do
 
   defp fetch_content(_, nil), do: nil
   defp fetch_content(slug, fetcher) when is_function(fetcher), do: fetcher.(slug)
-  defp fetch_content(slug, engine)  when is_atom(engine), do: apply(engine, :fetch, [slug])
-
+  defp fetch_content(slug, engine) when is_atom(engine), do: apply(engine, :fetch, [slug])
 end

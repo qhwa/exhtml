@@ -5,9 +5,8 @@ defmodule Exhtml.TableTest do
   doctest Exhtml.Table
 
   describe "before all set" do
-
     setup do
-      {:ok, pid} = Exhtml.Table.start_link auto_start_repo: false
+      {:ok, pid} = Exhtml.Table.start_link(auto_start_repo: false)
       Exhtml.Table.rm(pid, "foo")
       {:ok, %{pid: pid}}
     end
@@ -26,9 +25,8 @@ defmodule Exhtml.TableTest do
   end
 
   describe "after all set" do
-
     setup do
-      {:ok, pid} = Exhtml.Table.start_link auto_start_repo: false
+      {:ok, pid} = Exhtml.Table.start_link(auto_start_repo: false)
       Exhtml.Table.start_repo(pid, [])
 
       {:ok, %{pid: pid}}
@@ -49,17 +47,15 @@ defmodule Exhtml.TableTest do
 
     test ".get_content_since of nonexist", %{pid: pid} do
       assert Exhtml.Table.get_since(pid, "nonexist", nil) == nil
-      assert Exhtml.Table.get_since(pid, "nonexist", DateTime.utc_now) == nil
+      assert Exhtml.Table.get_since(pid, "nonexist", DateTime.utc_now()) == nil
     end
 
     test ".get_content_since of existing key", %{pid: pid} do
       :ok = Exhtml.Table.set(pid, "foo", :bar)
 
       assert Exhtml.Table.get_since(pid, "foo", nil) == {:ok, :bar}
-      assert Exhtml.Table.get_since(pid, "foo", DateTime.utc_now) == :unchanged
+      assert Exhtml.Table.get_since(pid, "foo", DateTime.utc_now()) == :unchanged
       assert Exhtml.Table.get_since(pid, "foo", yesterday()) == {:ok, :bar}
     end
-
   end
-
 end
