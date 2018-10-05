@@ -1,6 +1,6 @@
 defmodule ExhtmlTest.Storage.DefaultStorageTest do
   use ExUnit.Case
-  
+
   alias Exhtml.Storage.DefaultStorage
   doctest DefaultStorage
 
