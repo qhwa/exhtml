@@ -1,6 +1,7 @@
 # Exhtml
 
 ![travis-status](https://travis-ci.org/qhwa/exhtml.svg?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6dbd64f1b04149eda13f555ebc343543)](https://www.codacy.com/app/qhwa/exhtml?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=qhwa/exhtml&amp;utm_campaign=Badge_Grade)
 [![Inline docs](http://inch-ci.org/github/qhwa/exhtml.svg)](http://inch-ci.org/github/qhwa/exhtml)
 
 Exhtml is a library that handles HTML page serving.
@@ -14,7 +15,7 @@ There are some benifts to have a dynamic HTML page host rather than static serve
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
 
-  1. Add `exhtml` to your list of dependencies in `mix.exs`:
+1. Add `exhtml` to your list of dependencies in `mix.exs`:
 
   ```elixir
   def deps do
@@ -22,7 +23,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   end
   ```
 
-  2. Ensure `exhtml` is started before your application:
+2. Ensure `exhtml` is started before your application:
 
   ```elixir
   def application do
@@ -30,7 +31,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   end
   ```
 
-  3. (optional) Add configuration into your project:
+3. (optional) Add configuration into your project:
 
   ```elixir
   use Mix.Config

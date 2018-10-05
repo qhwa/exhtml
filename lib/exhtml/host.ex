@@ -7,6 +7,7 @@ defmodule Exhtml.Host do
   @type slug :: Exhtml.slug()
 
   use GenServer
+  alias Exhtml.Table
 
   @doc """
   Starts a host.
@@ -115,14 +116,14 @@ defmodule Exhtml.Host do
   def handle_call({:start_repo, opts}, _from, state) do
     state
     |> to_table_pid
-    |> Exhtml.Table.start_repo(opts)
+    |> Table.start_repo(opts)
     |> to_reply(state)
   end
 
   def handle_call({:join_repo, remote, opts}, _from, state) do
     state
     |> to_table_pid
-    |> Exhtml.Table.join_repo(remote, opts)
+    |> Table.join_repo(remote, opts)
     |> to_reply(state)
   end
 
@@ -163,7 +164,7 @@ defmodule Exhtml.Host do
   def handle_call({:delete_content, slug}, _from, state) do
     state
     |> elem(0)
-    |> Exhtml.Table.rm(slug)
+    |> Table.rm(slug)
     |> to_reply(state)
   end
 
@@ -175,7 +176,7 @@ defmodule Exhtml.Host do
   end
 
   defp start_host_with_opts(opts) do
-    {:ok, table_pid} = Exhtml.Table.start_link(opts)
+    {:ok, table_pid} = Table.start_link(opts)
 
     {:ok, storage_pid} =
       Exhtml.Storage.start_link(fetcher: opts[:content_fetcher] || Exhtml.Storage.DefaultStorage)
@@ -193,11 +194,11 @@ defmodule Exhtml.Host do
   end
 
   defp get_content_from_table(server, slug) do
-    Exhtml.Table.get(server, slug)
+    Table.get(server, slug)
   end
 
   defp get_content_from_table(server, slug, since) do
-    Exhtml.Table.get_since(server, slug, since)
+    Table.get_since(server, slug, since)
   end
 
   defp to_reply(ret, state) do
@@ -208,6 +209,6 @@ defmodule Exhtml.Host do
   defp set_content_to_table(_, _slug, content = {:error, _}), do: content
 
   defp set_content_to_table(server, slug, content) do
-    Exhtml.Table.set(server, slug, content)
+    Table.set(server, slug, content)
   end
 end
