@@ -1,44 +1,45 @@
-defmodule Exhtml.TableTest do
+defmodule TableTest do
   use ExUnit.Case
   import TestHelper
 
-  doctest Exhtml.Table
+  alias Exhtml.Table
+  doctest Table
 
   describe "before all set" do
     setup do
-      {:ok, pid} = Exhtml.Table.start_link(auto_start_repo: false)
-      Exhtml.Table.rm(pid, "foo")
+      {:ok, pid} = Table.start_link(auto_start_repo: false)
+      Table.rm(pid, "foo")
       {:ok, %{pid: pid}}
     end
 
     test "get nonexisting content", %{pid: pid} do
-      assert Exhtml.Table.get(pid, "nonexist") == {:error, :repo_not_started}
+      assert Table.get(pid, "nonexist") == {:error, :repo_not_started}
     end
 
     test "set content", %{pid: pid} do
-      assert Exhtml.Table.set(pid, "foo", "bar") == {:error, :repo_not_started}
+      assert Table.set(pid, "foo", "bar") == {:error, :repo_not_started}
     end
 
     test ".get_content_since of nonexist", %{pid: pid} do
-      assert Exhtml.Table.get_since(pid, "nonexist", nil) == {:error, :repo_not_started}
+      assert Table.get_since(pid, "nonexist", nil) == {:error, :repo_not_started}
     end
   end
 
   describe "after all set" do
     setup do
-      {:ok, pid} = Exhtml.Table.start_link(auto_start_repo: false)
-      Exhtml.Table.start_repo(pid, [])
+      {:ok, pid} = Table.start_link(auto_start_repo: false)
+      Table.start_repo(pid, [])
 
       {:ok, %{pid: pid}}
     end
 
     test "get nonexisting content", %{pid: pid} do
-      assert Exhtml.Table.get(pid, "nonexist") == nil
+      assert Table.get(pid, "nonexist") == nil
     end
 
     test "set content", %{pid: pid} do
-      :ok = Exhtml.Table.set(pid, "foo", "bar")
-      assert Exhtml.Table.get(pid, "foo") == "bar"
+      :ok = Table.set(pid, "foo", "bar")
+      assert Table.get(pid, "foo") == "bar"
     end
 
     test "set data_dir" do
@@ -46,16 +47,16 @@ defmodule Exhtml.TableTest do
     end
 
     test ".get_content_since of nonexist", %{pid: pid} do
-      assert Exhtml.Table.get_since(pid, "nonexist", nil) == nil
-      assert Exhtml.Table.get_since(pid, "nonexist", DateTime.utc_now()) == nil
+      assert Table.get_since(pid, "nonexist", nil) == nil
+      assert Table.get_since(pid, "nonexist", DateTime.utc_now()) == nil
     end
 
     test ".get_content_since of existing key", %{pid: pid} do
-      :ok = Exhtml.Table.set(pid, "foo", :bar)
+      :ok = Table.set(pid, "foo", :bar)
 
-      assert Exhtml.Table.get_since(pid, "foo", nil) == {:ok, :bar}
-      assert Exhtml.Table.get_since(pid, "foo", DateTime.utc_now()) == :unchanged
-      assert Exhtml.Table.get_since(pid, "foo", yesterday()) == {:ok, :bar}
+      assert Table.get_since(pid, "foo", nil) == {:ok, :bar}
+      assert Table.get_since(pid, "foo", DateTime.utc_now()) == :unchanged
+      assert Table.get_since(pid, "foo", yesterday()) == {:ok, :bar}
     end
   end
 end

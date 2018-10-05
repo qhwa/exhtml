@@ -19,13 +19,15 @@ defmodule Exhtml do
 
   """
 
+  alias Exhtml.Host
+
   @name :exhtml_host
 
   @doc false
   def start(opts) do
     opts
     |> Keyword.put(:name, @name)
-    |> Exhtml.Host.start_link()
+    |> Host.start_link()
   end
 
   @doc """
@@ -36,7 +38,7 @@ defmodule Exhtml do
   """
   @spec start_repo(key: any) :: :ok | {:error, any}
   def start_repo(opts) do
-    Exhtml.Host.start_repo(@name, opts)
+    Host.start_repo(@name, opts)
   end
 
   @doc """
@@ -49,7 +51,7 @@ defmodule Exhtml do
   """
   @spec join_repo(node, key: any) :: :ok | {:error, any}
   def join_repo(node, opts) do
-    Exhtml.Host.join_repo(@name, node, opts)
+    Host.join_repo(@name, node, opts)
   end
 
   @doc """
@@ -71,7 +73,7 @@ defmodule Exhtml do
   """
   @spec set_content_fetcher((slug -> any) | module) :: :ok
   def set_content_fetcher(f) do
-    Exhtml.Host.set_content_fetcher(@name, f)
+    Host.set_content_fetcher(@name, f)
   end
 
   @doc """
@@ -89,7 +91,7 @@ defmodule Exhtml do
   """
   @spec get_content(slug) :: any
   def get_content(slug) do
-    Exhtml.Host.get_content(@name, slug)
+    Host.get_content(@name, slug)
   end
 
   @doc """
@@ -105,7 +107,7 @@ defmodule Exhtml do
   """
   @spec get_content_since(slug, DateTime.t()) :: any
   def get_content_since(slug, time) do
-    Exhtml.Host.get_content_since(@name, slug, time)
+    Host.get_content_since(@name, slug, time)
   end
 
   @doc """
@@ -126,7 +128,7 @@ defmodule Exhtml do
   """
   @spec set_content(slug, any) :: :ok
   def set_content(slug, value) do
-    Exhtml.Host.set_content(@name, slug, value)
+    Host.set_content(@name, slug, value)
   end
 
   @doc """
@@ -146,7 +148,7 @@ defmodule Exhtml do
   """
   @spec update_content(slug) :: any
   def update_content(slug) do
-    Exhtml.Host.update_content(@name, slug)
+    Host.update_content(@name, slug)
   end
 
   @doc """
@@ -170,6 +172,6 @@ defmodule Exhtml do
   """
   @spec delete_content(slug) :: :ok
   def delete_content(slug) do
-    Exhtml.Host.delete_content(@name, slug)
+    Host.delete_content(@name, slug)
   end
 end
