@@ -7,48 +7,48 @@
 Exhtml is a library that handles HTML page serving.
 There are some benifts to have a dynamic HTML page host rather than static server:
 
-1.  It's easy to deploy a small number of pages.
-2.  It's safer to make the HTML server pull content from backend storage than push contents to it.
-3.  We can add middlewares as we wish, such as performance monitoring, server-side procsessing, etc..
+1. It's easy to deploy a small number of pages.
+2. It's safer to make the HTML server pull content from backend storage than push contents to it.
+3. We can add middlewares as we wish, such as performance monitoring, server-side procsessing, etc..
 
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
 
-1.   Add `exhtml` to your list of dependencies in `mix.exs`:
+1. Add `exhtml` to your list of dependencies in `mix.exs`:
 
-    ```elixir
-    def deps do
-      [{:exhtml, "~> 0.1.0"}]
-    end
-    ```
+```elixir
+def deps do
+  [{:exhtml, "~> 0.1.0"}]
+end
+```
 
-2.   Ensure `exhtml` is started before your application:
+2. Ensure `exhtml` is started before your application:
 
-    ```elixir
-    def application do
-      [applications: [:exhtml]]
-    end
-    ```
+```elixir
+def application do
+  [applications: [:exhtml]]
+end
+```
 
-3.    (optional) Add configuration into your project:
+3. (optional) Add configuration into your project:
 
-    ```elixir
-    use Mix.Config
+```elixir
+use Mix.Config
 
-    # `content_fetcher` can either be a module or a function
-    # `MyContentFetcher.fetch` accepts a key and returns content for the key.
-    config :exhtml,
-  
-    # use a function in named module as a fetcher:
-    # content_fetcher: &MyContentFetcher.fetch/1,
+# `content_fetcher` can either be a module or a function
+# `MyContentFetcher.fetch` accepts a key and returns content for the key.
+config :exhtml,
 
-    # or use an anonymous function:
-    content_fetcher: fn slug -> "#{slug} content on remote" end,
+# use a function in named module as a fetcher:
+# content_fetcher: &MyContentFetcher.fetch/1,
 
-    # where to store contents on disk:
-    data_dir: "/home/data/exhtml_contents"
-    ```
+# or use an anonymous function:
+content_fetcher: fn slug -> "#{slug} content on remote" end,
+
+# where to store contents on disk:
+data_dir: "/home/data/exhtml_contents"
+```
 
 ## Usage
 
